@@ -30,5 +30,6 @@ namespace Game
         public void Back() { Sprite.Position = Sprite.Position + new Vector2f(0, +Speed); }
 
         void Render() { }
+        public void Collision() { }
     }
 }

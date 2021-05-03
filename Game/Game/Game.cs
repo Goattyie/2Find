@@ -42,7 +42,10 @@ namespace Game
         public void RenderHeroes()
         {
             foreach (Hero hero in Heroes)
+            {
+                hero.Collision();
                 Window.Draw(hero.Sprite);
+            }
         }
         public void RenderMap()
         {
