@@ -9,7 +9,8 @@ namespace Game
         public int GameStatus { get; set; } = 0;
         public Settings Settings { get; set; }
         public RenderWindow Window { get; set; }
-        Hero[] heroes { get; set; }
+        Hero[] Heroes { get; set; }
+        World Map { get; set; }
         Game() { }
         public Game(Settings settings, IGameSettings gameSettings) 
         {
@@ -20,26 +21,37 @@ namespace Game
             //События
             Window.Closed += WindowClose;
             //Window.KeyPressed += KeyController;
-            
 
+            Map = new World();
             View();
         }
         public void View()
         {
-            heroes = new Hero[] { new Hero("Hero1.png") };
+
+            Heroes = new Hero[] { new Hero("Hero1.png") };
             while (Window.IsOpen)
             {
                 Window.DispatchEvents();
-                Window.Clear(Color.Black);
+                Window.Clear();
                 KeyController();
-                ViewHeroes(); //Показывать героев
+                RenderMap();//Отрисовка карты
+                RenderHeroes(); //Показывать героев
                 Window.Display();
             }
         }
-        public void ViewHeroes()
+        public void RenderHeroes()
         {
-            foreach (Hero hero in heroes)
+            foreach (Hero hero in Heroes)
                 Window.Draw(hero.Sprite);
+        }
+        public void RenderMap()
+        {
+            //WorldTextures Block = new WorldTextures();
+            foreach (Hero hero in Heroes)
+            {
+                Map.Render(Window, hero.Position);
+            }
+            
         }
 
         public void WindowClose(object sender, EventArgs e)
@@ -48,10 +60,10 @@ namespace Game
         }
         public void KeyController()
         {
-            if(Keyboard.IsKeyPressed(Keyboard.Key.A)) { heroes[0].Left(); }
-            if (Keyboard.IsKeyPressed(Keyboard.Key.W)) { heroes[0].Forward(); }
-            if (Keyboard.IsKeyPressed(Keyboard.Key.D)) { heroes[0].Right(); }
-            if (Keyboard.IsKeyPressed(Keyboard.Key.S)) { heroes[0].Back(); }
+            if(Keyboard.IsKeyPressed(Keyboard.Key.A)) { Heroes[0].Left(); }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.W)) { Heroes[0].Forward(); }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.D)) { Heroes[0].Right(); }
+            if (Keyboard.IsKeyPressed(Keyboard.Key.S)) { Heroes[0].Back(); }
         }
     }
 }

@@ -76,3 +76,4 @@ D:\Game2.0\2Find\Game\Game\obj\Debug\net5.0\Game.dll
 D:\Game2.0\2Find\Game\Game\obj\Debug\net5.0\ref\Game.dll
 D:\Game2.0\2Find\Game\Game\obj\Debug\net5.0\Game.pdb
 D:\Game2.0\2Find\Game\Game\obj\Debug\net5.0\Game.genruntimeconfig.cache
+D:\Game2.0\2Find\Game\Game\obj\Debug\net5.0\Game.csprojAssemblyReference.cache

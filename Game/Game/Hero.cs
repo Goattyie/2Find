@@ -9,6 +9,7 @@ namespace Game
     {
         Texture Model;
         public Sprite Sprite { get; set; } = new Sprite();
+        public float[] Position { get { return new float[2] { Sprite.Position.X/WorldTextures.BlockSize[0], Sprite.Position.Y / WorldTextures.BlockSize[1] }; }}
         float Speed { get; set; } = 11.4f;
         int[] Size { get; set; }
         int Width { get; set; }
@@ -23,8 +24,8 @@ namespace Game
             Sprite.Texture = Model;
         }
 
-        public void Left() { Sprite.Position = Sprite.Position + new Vector2f(-Speed, 0); }
-        public void Right() { Sprite.Position = Sprite.Position + new Vector2f(Speed, 0); }
+        public void Left() { Sprite.Position = Sprite.Position + new Vector2f(-Speed, 0);}
+        public void Right() { Sprite.Position = Sprite.Position + new Vector2f(Speed, 0);}
         public void Forward() { Sprite.Position = Sprite.Position + new Vector2f(0, -Speed); }
         public void Back() { Sprite.Position = Sprite.Position + new Vector2f(0, +Speed); }
 
