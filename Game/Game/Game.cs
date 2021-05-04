@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using System;
 using SFML.Window;
+using SFML.System;
 
 namespace Game
 {
@@ -43,7 +44,7 @@ namespace Game
         {
             foreach (Hero hero in Heroes)
             {
-                hero.Collision();
+                hero.Collision(Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0]) + 1].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0])], Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0])].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0]) + 1], Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0]) - 1].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0])], Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0])].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0]) - 1]);
                 Window.Draw(hero.Sprite);
             }
         }

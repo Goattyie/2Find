@@ -31,9 +31,9 @@ namespace Game
         public World(string[][]map) { }
         public void Render(RenderWindow window, float[] Position)
         {
-            for(int y = 0; y < this.Height; y++)
+            for(int y = 0; y < 9; y++)
             {
-                for(int x = 0; x < this.Width; x++)
+                for(int x = 0; x < 12; x++)
                 {
                     RectangleShape blck = Block.View(GameField[y].ToString()[x], x,y);
                     window.Draw(blck);
