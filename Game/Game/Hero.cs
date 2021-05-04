@@ -5,21 +5,15 @@ using SFML.System;
 
 namespace Game
 {
-    class Hero
+    class Hero:Entity
     {
-        Texture Model;
-        public Sprite Sprite { get; set; } = new Sprite();
-        public float[] Center { get { return new float[2] { (Sprite.Position.X + Width / 2), (Sprite.Position.Y + Height /2)  }; }}
-        public int[] Position { get { return new int[2] {(int) (Sprite.Position.X + Width / 2) / WorldTextures.BlockSize[0], (int)(Sprite.Position.Y + Height / 2) / WorldTextures.BlockSize[1] }; } }
+        
 
         public RectangleShape Hitbox { get; set; } = new RectangleShape();
         public RectangleShape[] CollisionBlock { get; set; }
 
 
-        float Speed { get; set; } = 8.4f;
-        public int[] Size { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        
 
         Hero() { }
         public Hero(string textureFile)
@@ -103,10 +97,6 @@ namespace Game
             
         }
 
-        void Spawn()
-        {
-            Sprite.Position = new Vector2f(150, 150);
-        }
         void Render() { }
         
         public void Collision(char back, char right, char forward, char left) 

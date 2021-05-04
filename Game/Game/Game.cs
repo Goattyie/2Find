@@ -9,12 +9,15 @@ namespace Game
     {
         public int GameStatus { get; set; } = 0;
         public Settings Settings { get; set; }
+        private IGameSettings GameSettings { get; set; }
         public RenderWindow Window { get; set; }
         Hero[] Heroes { get; set; }
+        Enemy[] Enemies { get; set; }
         World Map { get; set; }
         Game() { }
         public Game(Settings settings, IGameSettings gameSettings) 
         {
+            GameSettings = gameSettings;
             Settings = settings;
             Window = new RenderWindow(new SFML.Window.VideoMode((uint)Settings.WindowWidth, (uint)Settings.WindowHeight), Settings.WindowName);
             Window.SetVerticalSyncEnabled(Settings.VSync);
@@ -24,7 +27,16 @@ namespace Game
             //Window.KeyPressed += KeyController;
 
             Map = new World();
+            SpawnEnemyes();
             View();
+        }
+        private void SpawnEnemyes()
+        {
+            Enemies = new Enemy[GameSettings.CountDefaultEnemy];
+            for(int i = 0; i < GameSettings.CountDefaultEnemy; i++) 
+            {
+                Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField);
+            }
         }
         public void View()
         {
@@ -37,10 +49,11 @@ namespace Game
                 KeyController();
                 RenderMap();//Отрисовка карты
                 RenderHeroes(); //Показывать героев
+                RenderEnemies(); //Показывать врагов
                 Window.Display();
             }
         }
-        public void RenderHeroes()
+        private void RenderHeroes()
         {
             foreach (Hero hero in Heroes)
             {
@@ -54,7 +67,7 @@ namespace Game
                 }
             }
         }
-        public void RenderMap()
+        private void RenderMap()
         {
             //WorldTextures Block = new WorldTextures();
             foreach (Hero hero in Heroes)
@@ -63,12 +76,19 @@ namespace Game
             }
             
         }
+        private void RenderEnemies()
+        {
+            foreach(Enemy enemy in Enemies)
+            {
+                Window.Draw(enemy.Sprite);
+            }
+        }
 
         public void WindowClose(object sender, EventArgs e)
         {
             Window.Close();
         }
-        public void KeyController()
+        private void KeyController()
         {
             if(Keyboard.IsKeyPressed(Keyboard.Key.A)) { Heroes[0].Left(); }
             if (Keyboard.IsKeyPressed(Keyboard.Key.W)) { Heroes[0].Forward(); }
