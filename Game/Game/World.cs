@@ -29,7 +29,7 @@ namespace Game
 
         }
         public World(string[][]map) { }
-        public void Render(RenderWindow window, float[] Position)
+        public void Render(RenderWindow window, int[] Position)
         {
             for(int y = 0; y < 9; y++)
             {

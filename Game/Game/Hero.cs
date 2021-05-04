@@ -9,43 +9,98 @@ namespace Game
     {
         Texture Model;
         public Sprite Sprite { get; set; } = new Sprite();
-        public float[] Position { get { return new float[2] { (Sprite.Position.X + Hitbox.Width / 2), (Sprite.Position.Y + Hitbox.Height /2)  }; }}
- 
-        float Speed { get; set; } = 1.4f;
-        public Hitbox Hitbox { get; set; }
-        
+        public float[] Center { get { return new float[2] { (Sprite.Position.X + Width / 2), (Sprite.Position.Y + Height /2)  }; }}
+        public int[] Position { get { return new int[2] {(int) (Sprite.Position.X + Width / 2) / WorldTextures.BlockSize[0], (int)(Sprite.Position.Y + Height / 2) / WorldTextures.BlockSize[1] }; } }
+
+        public RectangleShape Hitbox { get; set; } = new RectangleShape();
+        public RectangleShape[] CollisionBlock { get; set; }
+
+
+        float Speed { get; set; } = 8.4f;
+        public int[] Size { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
         Hero() { }
         public Hero(string textureFile)
         {
             Model = new Texture($"GameTextures/{textureFile}");
-            Hitbox = new Hitbox((int)Model.Size.X, (int)Model.Size.Y);
+            Width = (int)Model.Size.X;
+            Height = (int)Model.Size.Y;
+            Size = new int[] { Width, Height };
             Sprite.Texture = Model;
+            CollisionBlock = new RectangleShape[4];
+            for(int i = 0; i < CollisionBlock.Length; i++)
+            {
+                CollisionBlock[i] = new RectangleShape();
+                CollisionBlock[i].Size = new Vector2f(WorldTextures.BlockSize[0], WorldTextures.BlockSize[1]);
+            }
             Spawn();
+            Hitbox.Size = new Vector2f(Width, Height);
+            Hitbox.Position = Sprite.Position;
         }
-
         public void Left() 
         {
-            Hitbox.SetDirection(4);
-            if(!Ray.Crossing(Hitbox.Direction, Hitbox.CollisionLine[3]))
-                Sprite.Position = Sprite.Position + new Vector2f(-Speed, 0);
+            Hitbox.Position = Sprite.Position + new Vector2f(-Speed, 0);
+            foreach (RectangleShape rs in CollisionBlock)
+            {
+                if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
+                {
+                    Hitbox.Position = Sprite.Position;
+                    return;
+                }
+
+            }
+            Sprite.Position = Sprite.Position + new Vector2f(-Speed, 0);
+            Hitbox.Position = Sprite.Position;
+            
         }
         public void Right() 
         {
-            Hitbox.SetDirection(2);
-            if (!Ray.Crossing(Hitbox.Direction, Hitbox.CollisionLine[1]))
-                Sprite.Position = Sprite.Position + new Vector2f(Speed, 0);
+            Hitbox.Position = Sprite.Position + new Vector2f(Speed, 0);
+            foreach(RectangleShape rs in CollisionBlock)
+            {
+                if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
+                {
+                    Hitbox.Position = Sprite.Position;
+                    return;
+                }
+                    
+            }
+            Sprite.Position = Sprite.Position + new Vector2f(Speed, 0);
+            Hitbox.Position = Sprite.Position;
         }
         public void Forward() 
         {
-            Hitbox.SetDirection(3);
-            if (!Ray.Crossing(Hitbox.Direction, Hitbox.CollisionLine[2]))
-                Sprite.Position = Sprite.Position + new Vector2f(0, -Speed); 
+            Hitbox.Position = Sprite.Position + new Vector2f(0, -Speed);
+            foreach (RectangleShape rs in CollisionBlock)
+            {
+                if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
+                {
+                    Hitbox.Position = Sprite.Position;
+                    return;
+                }
+
+            }
+            Sprite.Position = Sprite.Position + new Vector2f(0, -Speed);
+                Hitbox.Position = Sprite.Position;
+            
         }
         public void Back() 
         {
-            Hitbox.SetDirection(1);
-            if (!Ray.Crossing(Hitbox.Direction, Hitbox.CollisionLine[0]))
-                Sprite.Position = Sprite.Position + new Vector2f(0, +Speed); 
+            Hitbox.Position = Sprite.Position + new Vector2f(0, +Speed);
+            foreach (RectangleShape rs in CollisionBlock)
+            {
+                if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
+                {
+                    Hitbox.Position = Sprite.Position;
+                    return;
+                }
+
+            }
+            Sprite.Position = Sprite.Position + new Vector2f(0, +Speed);
+            Hitbox.Position = Sprite.Position;
+            
         }
 
         void Spawn()
@@ -56,33 +111,44 @@ namespace Game
         
         public void Collision(char back, char right, char forward, char left) 
         {
-            Hitbox.Center = Position;
-            Hitbox.Update();
-            Hitbox.CollisionClear();
             if ((back > 47 && back < 70) || (back > 96 && back < 102))
-                Hitbox.CreateLine((int)(Position[0] / WorldTextures.BlockSize[0]), (int)(Position[1] / WorldTextures.BlockSize[1]) + 1, 1);
+                CollisionBlock[0].Position = new Vector2f(Position[0] * WorldTextures.BlockSize[0], (Position[1] + 1) * WorldTextures.BlockSize[1]);
 
             if ((right > 47 && right < 70) || (right > 96 && right < 102))
-               Hitbox.CreateLine((int)(Position[0] / WorldTextures.BlockSize[0]) + 1, (int)(Position[1] / WorldTextures.BlockSize[1]), 2);
+                CollisionBlock[1].Position = new Vector2f((Position[0] + 1) * WorldTextures.BlockSize[0], Position[1] * WorldTextures.BlockSize[1]);
 
             if ((forward > 47 && forward < 70) || (forward > 96 && forward < 102))
-                Hitbox.CreateLine((int)(Position[0]/WorldTextures.BlockSize[0]), (int)(Position[1] / WorldTextures.BlockSize[1]) - 1, 3);
+                CollisionBlock[2].Position = new Vector2f(Position[0] * WorldTextures.BlockSize[0], (Position[1] - 1) * WorldTextures.BlockSize[1]);
 
             if ((left > 47 && left < 70) || (left > 96 && left < 102))
-                Hitbox.CreateLine((int)(Position[0] / WorldTextures.BlockSize[0]) - 1, (int)(Position[1] / WorldTextures.BlockSize[1]), 4);
+                CollisionBlock[3].Position = new Vector2f((Position[0] - 1) * WorldTextures.BlockSize[0], Position[1] * WorldTextures.BlockSize[1]);
+        }   
 
-            
-            if (Hitbox.CollisionLine[0].X1 != 0)
-                Console.WriteLine("back");
-            if (Hitbox.CollisionLine[1].X1 != 0)
-                Console.WriteLine("right");
-            if (Hitbox.CollisionLine[2].X1 != 0)
-                Console.WriteLine("forward");
-            if (Hitbox.CollisionLine[3].X1 != 0)
-                Console.WriteLine("left");
-            
+
+        protected bool RectangleCross(float x1, float y1, float x2, float y2) //Пересечение хитбокса и коллизионного квадрата
+        {
+            /*
+            x1, y1 - левая нижняя точка первого прямоугольника
+            x2, y2 - правая верхняя точка первого прямоугольника
+            x3, y3 - левая нижняя точка второго прямоугольника
+            x4, y4 - правая верхняя точка второго прямоугольника
+            */
+
+            float left = Math.Max(x1, x2);
+            float top = Math.Min(y1 + Height, y2 + WorldTextures.BlockSize[1]);
+            float right = Math.Min(x1 + Width, x2 + WorldTextures.BlockSize[0]);
+            float bottom = Math.Max(y1, y2);
+
+
+
+            float width = right - left;
+            float height =  top - bottom;
+
+            if (width < 0 || height < 0)
+                return false;
+
+            return true;
         }
- 
-        
+
     }
 }

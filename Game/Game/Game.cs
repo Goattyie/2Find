@@ -44,8 +44,14 @@ namespace Game
         {
             foreach (Hero hero in Heroes)
             {
-                hero.Collision(Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0]) + 1].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0])], Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0])].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0]) + 1], Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0]) - 1].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0])], Map.GameField[(int)(hero.Position[1] / WorldTextures.BlockSize[0])].ToString()[(int)(hero.Position[0] / WorldTextures.BlockSize[0]) - 1]);
+                hero.Collision(Map.GameField[hero.Position[1] + 1][hero.Position[0]], Map.GameField[hero.Position[1]][hero.Position[0] + 1], Map.GameField[hero.Position[1] - 1][hero.Position[0]], Map.GameField[hero.Position[1]][hero.Position[0] - 1]);
+                Window.Draw(hero.Hitbox);
                 Window.Draw(hero.Sprite);
+                foreach (RectangleShape rs in hero.CollisionBlock)
+                {
+                    if(rs != null)
+                        Window.Draw(rs);
+                }
             }
         }
         public void RenderMap()
