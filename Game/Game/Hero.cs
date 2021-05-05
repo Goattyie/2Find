@@ -12,24 +12,21 @@ namespace Game
         public RectangleShape Hitbox { get; set; } = new RectangleShape();
         public RectangleShape[] CollisionBlock { get; set; }
 
-
+        protected override float Speed { get; set; } = 8f;
         
 
-        Hero() { }
-        public Hero(string textureFile)
+        Hero():base() { }
+        public Hero(string textureFile, float scale):base(textureFile, scale)
         {
-            Model = new Texture($"GameTextures/{textureFile}");
-            Width = (int)Model.Size.X;
-            Height = (int)Model.Size.Y;
-            Size = new int[] { Width, Height };
-            Sprite.Texture = Model;
+            
             CollisionBlock = new RectangleShape[4];
             for(int i = 0; i < CollisionBlock.Length; i++)
             {
                 CollisionBlock[i] = new RectangleShape();
                 CollisionBlock[i].Size = new Vector2f(WorldTextures.BlockSize[0], WorldTextures.BlockSize[1]);
             }
-            Spawn();
+
+           
             Hitbox.Size = new Vector2f(Width, Height);
             Hitbox.Position = Sprite.Position;
         }

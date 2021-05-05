@@ -11,7 +11,18 @@ namespace Game
     abstract class Entity
     {
         protected Texture Model;
-        protected float Speed { get; set; } = 8.4f;
+        protected virtual float Speed { get; set; } = 8f;
+        protected Entity() { }
+        protected Entity(string textureFile, float scale)
+        {
+            Model = new Texture($"GameTextures/{textureFile}");
+            Sprite.Texture = Model;
+            Sprite.Scale *= scale;
+            Width = (int)(Model.Size.X * scale);
+            Height = (int)(Model.Size.Y * scale);
+            Size = new int[] { Width, Height };
+            Speed *= scale;
+        }
         public int VisibleRange { get; set; } = 450;
         public int[] Size { get; set; }
         public int Width { get; set; }
@@ -19,18 +30,32 @@ namespace Game
         public Sprite Sprite { get; set; } = new Sprite();
         public float[] Center { get { return new float[2] { (Sprite.Position.X + Width / 2), (Sprite.Position.Y + Height / 2) }; } }
         public int[] Position { get { return new int[2] { (int)(Sprite.Position.X + Width / 2) / WorldTextures.BlockSize[0], (int)(Sprite.Position.Y + Height / 2) / WorldTextures.BlockSize[1] }; } }
-        public void Spawn() { Sprite.Position = new Vector2f(150, 150); }
-        public void Spawn(int x, int y) { Sprite.Position = new Vector2f(x * WorldTextures.BlockSize[0], y * WorldTextures.BlockSize[1]); }
-        public bool SeeOtherEntity(Entity entity1, Entity entity2, string[] VisibleChank) 
+        public void RandomSpawn(string[] GameField)
         {
-            float[] dot = entity1.Center;
-            float KatetX = -entity1.Center[0] + entity2.Center[0];
-            float KatetY = -entity1.Center[1] + entity2.Center[1];
-            double Gipotenuza = Math.Sqrt(Math.Pow(KatetX, 2) + Math.Pow(KatetY, 2));
-            for (double c = 0; c < entity1.VisibleRange; c += 1)
+            int x = 0;
+            int y = 0;
+            while (true)
             {
-                double x = entity1.Center[0] + c * KatetX/(float)Gipotenuza;
-                double y = entity1.Center[1] + c * KatetY / (float)Gipotenuza;
+                y = new Random().Next(1, GameField.Length - 2);
+                x = new Random().Next(1, GameField[0].Length - 2);
+                if (!(GameField[y][x] > 47 && GameField[y][x] < 70) && !(GameField[y][x] > 47 && GameField[y][x] < 70))
+                    break;
+            }
+            Spawn(x, y); 
+        }
+        public void Spawn(int x, int y) 
+        { 
+            Sprite.Position = new Vector2f(x * WorldTextures.BlockSize[0] + WorldTextures.BlockSize[0]/2 - Width/2, y * WorldTextures.BlockSize[1] + WorldTextures.BlockSize[1] / 2 - Height / 2); 
+        }
+        public bool SeeOtherEntity(Entity entity2, string[] VisibleChank) 
+        {
+            float KatetX = -this.Center[0] + entity2.Center[0];
+            float KatetY = -this.Center[1] + entity2.Center[1];
+            double Gipotenuza = Math.Sqrt(Math.Pow(KatetX, 2) + Math.Pow(KatetY, 2));
+            for (double c = 0; c < this.VisibleRange; c += 1)
+            {
+                double x = this.Center[0] + c * KatetX/(float)Gipotenuza;
+                double y = this.Center[1] + c * KatetY / (float)Gipotenuza;
                 if ((VisibleChank[(int)y / WorldTextures.BlockSize[1]][(int)x / WorldTextures.BlockSize[0]] > 47 &&
                     VisibleChank[(int)y / WorldTextures.BlockSize[1]][(int)x / WorldTextures.BlockSize[0]] < 70) || (
                     VisibleChank[(int)y / WorldTextures.BlockSize[1]][(int)x / WorldTextures.BlockSize[0]] > 96 &&

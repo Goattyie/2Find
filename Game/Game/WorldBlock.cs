@@ -16,7 +16,7 @@ namespace Game
 
 		int Angle { get; set; }
         public static int[] BlockSize { get; set; } = new int[] { 120, 120 };
-        public WorldTextures() 
+        public WorldTextures(float scale) 
 		{
 			roof1 = new Texture("MapTextures/roof1.png");
 			roof1_2 = new Texture("MapTextures/roof1.2.png");
@@ -41,6 +41,8 @@ namespace Game
 			ground7_2 = new Texture("MapTextures/ground7.2.png");
 			ground8 = new Texture("MapTextures/ground8.png");
 			ground9 = new Texture("MapTextures/ground9.png");
+			BlockSize[0] = (int)(BlockSize[0] * scale);
+			BlockSize[1] = (int)(BlockSize[1] * scale);
 		}
 
         public RectangleShape View(char symbol, int x, int y) 
@@ -53,11 +55,11 @@ namespace Game
 			if (Angle != 0)
 			{
 				if (Angle == -90)
-					Block.Origin = new Vector2f(120, 0);
+					Block.Origin = new Vector2f(BlockSize[0], 0);
 				else if (Angle == 90)
-					Block.Origin = new Vector2f(0, 120);
+					Block.Origin = new Vector2f(0, BlockSize[1]);
 				else
-					Block.Origin = new Vector2f(120, 120);
+					Block.Origin = new Vector2f(BlockSize[0], BlockSize[1]);
 				Block.Rotation = Angle;
 			}
 			else

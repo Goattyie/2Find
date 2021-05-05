@@ -10,5 +10,6 @@ namespace Game
     {
         public int CountDefaultEnemy { get; set; } = 1;
         public int VisibleRange { get; set; } = 5;
+        public float Scale { get; set; } = 0.9f;
     }
 }

@@ -26,24 +26,31 @@ namespace Game
             Window.Closed += WindowClose;
             //Window.KeyPressed += KeyController;
 
-            Map = new World();
-            SpawnEnemyes();
+            Map = new World(gameSettings);
+            SpawnEntityes();
             View();
         }
-        private void SpawnEnemyes()
+        private void SpawnEntityes()
         {
+            Heroes = new Hero[] { new Hero("Hero1.png", GameSettings.Scale) };
+            for(int i = 0; i < Heroes.Length; i++)
+            {
+                //Heroes[i].RandomSpawn(Map.GameField);
+                Heroes[i].Spawn(1, 1);
+            }
+
             Enemies = new Enemy[GameSettings.CountDefaultEnemy];
             for(int i = 0; i < GameSettings.CountDefaultEnemy; i++) 
             {
-                
-                Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField);
+                Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField, GameSettings.Scale);
                 Enemies[i].Spawn(4, 4);
             }
+
         }
         public void View()
         {
 
-            Heroes = new Hero[] { new Hero("Hero1.png") };
+            
             while (Window.IsOpen)
             {
                 Window.DispatchEvents();
@@ -67,6 +74,11 @@ namespace Game
                     if(rs != null)
                         Window.Draw(rs);
                 }
+                foreach (Enemy enemy in Enemies)
+                {
+                    if (hero.SeeOtherEntity(enemy, Map.GameField))
+                        Window.Draw(enemy.Sprite);
+                }
             }
         }
         private void RenderMap()
@@ -82,8 +94,7 @@ namespace Game
         {
             for(int i = 0; i < Enemies.Length; i++)
             {
-                Window.Draw(Enemies[i].Sprite);
-                Console.WriteLine(Enemies[i].SeeOtherEntity((Entity)Enemies[i], Heroes[0], Map.GameField));
+                //Console.WriteLine(Enemies[i].SeeOtherEntity((Entity)Enemies[i], Heroes[0], Map.GameField));
             }
         }
 
