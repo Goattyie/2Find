@@ -35,7 +35,9 @@ namespace Game
             Enemies = new Enemy[GameSettings.CountDefaultEnemy];
             for(int i = 0; i < GameSettings.CountDefaultEnemy; i++) 
             {
+                
                 Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField);
+                Enemies[i].Spawn(4, 4);
             }
         }
         public void View()
@@ -78,9 +80,10 @@ namespace Game
         }
         private void RenderEnemies()
         {
-            foreach(Enemy enemy in Enemies)
+            for(int i = 0; i < Enemies.Length; i++)
             {
-                Window.Draw(enemy.Sprite);
+                Window.Draw(Enemies[i].Sprite);
+                Console.WriteLine(Enemies[i].SeeOtherEntity((Entity)Enemies[i], Heroes[0], Map.GameField));
             }
         }
 

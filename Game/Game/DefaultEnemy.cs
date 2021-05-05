@@ -19,7 +19,10 @@ namespace Game
             GameField = gamefield;
             Model = new Texture($"GameTextures/{texture}");
             Sprite.Texture = Model;
-            Spawn(2, 1);
+           
+            Width = (int)Model.Size.X;
+            Height = (int)Model.Size.Y;
+            Size = new int[] { Width, Height };
 
         }
 

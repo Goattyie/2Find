@@ -10,6 +10,7 @@ namespace Game
     {
         public string[] GameField { get; set; }
         public Hero HeroTarget { get; set; }
+        public bool VisibleRarget { get; set; } = false;
         public void AI() { }
     }
 }
