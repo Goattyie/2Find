@@ -11,19 +11,22 @@ namespace Game
 {
     class MainMenu:IWindow
     {
-        Button CreateServer { get; set; }
-        Button ConnectServer { get; set; }
+        Button CreateServerButton { get; set; }
+        Button ConnectServerButton { get; set; }
         Button SettingsButton { get; set; }
         Button About { get; set; }
         Button Exit { get; set; }
+        CreateServer Create { get; set; }
+        ConnectServer Connect { get; set; }
+        SettingsMenu Settings { get; set; }
         public RenderWindow Window { get; set; }
         Sprite Background { get; set; } = new Sprite();//пока что картинкой
 
         public MainMenu(Settings settings)
         {
             IWindow.Settings = settings;
-            CreateServer = new Button("createserver.png", new Vector2f(50,100));
-            ConnectServer = new Button("connect.png", new Vector2f(50, 225));
+            CreateServerButton = new Button("createserver.png", new Vector2f(50,100));
+            ConnectServerButton = new Button("connect.png", new Vector2f(50, 225));
             SettingsButton = new Button("settings.png", new Vector2f(50, 350));
             About = new Button("about.png", new Vector2f(50, 475));
             Exit = new Button("exit.png", new Vector2f(50, 600));
@@ -55,8 +58,8 @@ namespace Game
         }
         private void DrawButtons()
         {
-            CreateServer.Draw(Window);
-            ConnectServer.Draw(Window);
+            CreateServerButton.Draw(Window);
+            ConnectServerButton.Draw(Window);
             SettingsButton.Draw(Window);
             About.Draw(Window);
             Exit.Draw(Window);
@@ -66,17 +69,23 @@ namespace Game
         {
             if (Mouse.IsButtonPressed(Mouse.Button.Left))
             {
-                if (CreateServer.isPicked)
+                if (CreateServerButton.isPicked)
                 {
-                    new CreateServer(Window);
+                    if (Create == null)
+                        Create = new CreateServer(Window);
+                    Create.View();
                 }
-                else if (ConnectServer.isPicked)
+                else if (ConnectServerButton.isPicked)
                 {
-                    new ConnectServer(Window);
+                    if (Connect == null)
+                        Connect = new ConnectServer(Window);
+                    Connect.View();
                 }
                 else if(SettingsButton.isPicked)
                 {
-                    new SettingsMenu(Window);
+                    if (Settings == null)
+                        Settings = new SettingsMenu(Window);
+                    Settings.View();
                 }
                 else if (About.isPicked)
                 {

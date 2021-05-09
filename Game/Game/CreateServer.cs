@@ -23,7 +23,7 @@ namespace Game
         Connection Connection { get; set; }
         LinkedList<string> Modes { get; set; }
         bool ButtonisDown { get; set; }
-        bool Canceled { get; set; }
+        bool Exit { get; set; }
         
         public CreateServer(RenderWindow window)
         {
@@ -36,7 +36,6 @@ namespace Game
             Modes = new LinkedList<string>(new[] { "Лёгкий", "Средний","Сложный" });
             SetLabels();
             SetButtons();
-            View();
         }
 
         private void SetLabels()
@@ -59,9 +58,8 @@ namespace Game
 
         public void View()
         {
-            while (!Canceled)
+            while (!Exit)
             {
-                
                 Window.DispatchEvents();
                 Window.Clear();
                 Window.Draw(Background);
@@ -75,6 +73,7 @@ namespace Game
                 ButtonActions();
                 Window.Display();
             }
+            Exit = false;
         }
 
         private void Window_TextEntered(object sender, TextEventArgs e)
@@ -86,13 +85,13 @@ namespace Game
             }
             else if (key == 27)
             {
-                Canceled = true;
+                Exit = true;
             }
         }
 
         private void StartGame()
         {
-            Game game = new Game(Window, new EasyGameSettings());
+            new Game(Window, new EasyGameSettings());
         }
 
         private void ButtonActions()
@@ -113,7 +112,7 @@ namespace Game
                 }
                 else if (Cancel.isPicked)
                 {
-                    Canceled = true;
+                    Exit = true;
                 }
             }
             else

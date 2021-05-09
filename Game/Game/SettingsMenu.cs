@@ -37,7 +37,6 @@ namespace Game
             Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
             SetLabels();
             SetButtons();
-            View();
         }
 
         private void SetLabels()
@@ -98,6 +97,7 @@ namespace Game
                 ButtonActions();
                 Window.Display();
             }
+            Exit = false;
         }
 
         private void ButtonActions()

@@ -20,7 +20,7 @@ namespace Game
         Button Connect { get; set; }
         Button Cancel { get; set; }
 
-        bool Canceled { get; set; }
+        bool Exit { get; set; }
         bool EndEnter { get; set; }
 
         public ConnectServer(RenderWindow window)
@@ -36,7 +36,6 @@ namespace Game
             TextBox = new TextBox(new Vector2f(IpLabel.Text.Position.X + 60, IpLabel.Text.Position.Y), new Vector2f(450, 50), "romand__.ttf", 38);
             Connect = new Button("connect.png", new Vector2f(IWindow.Settings.WindowWidth - 525, IWindow.Settings.WindowHeight - 105));
             Cancel = new Button("back.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
-            View();
         }
 
         private void NextStep()
@@ -61,13 +60,13 @@ namespace Game
             }
             else if (key == 27)
             {
-                Canceled = true;
+                Exit = true;
             }
         }
 
         public void View()
         {
-            while (!Canceled)
+            while (!Exit)
             {
                 Window.DispatchEvents();
                 Window.Clear();
@@ -86,6 +85,7 @@ namespace Game
                 ButtonActions();
                 Window.Display();
             }
+            Exit = false;
         }
 
         private void ButtonActions()
@@ -99,7 +99,7 @@ namespace Game
                 }
                 else if (Cancel.isPicked)
                 {
-                    Canceled = true;
+                    Exit = true;
                 }
             }
         }
