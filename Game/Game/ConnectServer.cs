@@ -28,11 +28,12 @@ namespace Game
             Window = window;
             Background.Texture = new Texture("GameTextures/background.png");
             Window.TextEntered += Window_TextEntered;
+            Window.Closed += WindowClose;
             //Window.KeyPressed += Window_KeyPressed;
             Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
-            IpLabel = new Label("19702.otf", 45, new Vector2f(IWindow.Settings.WindowWidth / 3, IWindow.Settings.WindowHeight / 2), 4, Color.White);
+            IpLabel = new Label(45, new Vector2f(IWindow.Settings.WindowWidth / 3, IWindow.Settings.WindowHeight / 2));
             IpLabel.Text.DisplayedString = "IP:";
-            Status = new Label("19702.otf", 40, new Vector2f(200, 200), 4, Color.White);
+            Status = new Label(40, new Vector2f(200, 200));
             TextBox = new TextBox(new Vector2f(IpLabel.Text.Position.X + 60, IpLabel.Text.Position.Y), new Vector2f(450, 50), "romand__.ttf", 38);
             Connect = new Button("connect.png", new Vector2f(IWindow.Settings.WindowWidth - 525, IWindow.Settings.WindowHeight - 105));
             Cancel = new Button("back.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
@@ -102,6 +103,11 @@ namespace Game
                     Exit = true;
                 }
             }
+        }
+
+        private void WindowClose(object sender, EventArgs e)
+        {
+            Window.Close();
         }
     }
 }

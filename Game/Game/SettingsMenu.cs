@@ -19,40 +19,49 @@ namespace Game
         Label Sound { get; set; }
         Label Scale { get; set; }
         Label Header { get; set; }
+        Label ScaleValue { get; set; }
 
-        Button SoundSwitch { get; set; }
-        Button VSyncSwitch { get; set; }
-        Button ClipSwitch { get; set; }
+        SwitchButton SoundSwitch { get; set; }
+        SwitchButton VSyncSwitch { get; set; }
+        SwitchButton ClipSwitch { get; set; }
         Button ResolutionChange { get; set; }
+        Button ScaleChange { get; set; }
         Button Cancel { get; set; }
         Button Apply { get; set; }
         Sprite Background { get; set; } = new Sprite();
         bool Exit { get; set; }
         bool ButtonisDown { get; set; }
-        
+        LinkedList<string> Scales { get; set; }
+
         public SettingsMenu(RenderWindow window)
         {
             Window = window;
+            Window.Closed += WindowClose;
             Background.Texture = new Texture("GameTextures/background.png");
             Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
+            Scales = new LinkedList<string>(new[] { "0.5", "0.75", "1", "1.25", "1.5" });
             SetLabels();
             SetButtons();
         }
 
         private void SetLabels()
         {
-            Header = new Label("19702.otf", 45, new Vector2f(IWindow.Settings.WindowWidth / 2 - 100, 50), 4, Color.White);
+            Header = new Label(45, new Vector2f(IWindow.Settings.WindowWidth / 2 - 100, 50));
             Header.Text.DisplayedString = "Настройки";
-            Resolution = new Label("19702.otf", 40, new Vector2f(IWindow.Settings.WindowWidth / 10, 150), 4, Color.White);
+            Resolution = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 10, 150));
             Resolution.Text.DisplayedString = "Разрешение экрана";
-            VSync = new Label("19702.otf", 40, new Vector2f(IWindow.Settings.WindowWidth / 10, 250), 4, Color.White);
+            VSync = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 10, 250));
             VSync.Text.DisplayedString = "Вертикальная синхронизация";
-            Scale = new Label("19702.otf", 40, new Vector2f(IWindow.Settings.WindowWidth / 10, 350), 4, Color.White);
+            Scale = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 10, 350));
             Scale.Text.DisplayedString = "Масштабирование экрана";
-            Sound = new Label("19702.otf", 40, new Vector2f(IWindow.Settings.WindowWidth / 10, 450), 4, Color.White);
+            Sound = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 10, 450));
             Sound.Text.DisplayedString = "Звук";
-            Clip = new Label("19702.otf", 40, new Vector2f(IWindow.Settings.WindowWidth / 10, 550), 4, Color.White);
+            Clip = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 10, 550));
             Clip.Text.DisplayedString = "Вступительный ролик";
+            ResolutionValue = new Label(40, new Vector2f((float)IWindow.Settings.WindowWidth / 1.5f, Resolution.Text.Position.Y));
+            ResolutionValue.Text.DisplayedString = $"{IWindow.Settings.WindowWidth}x{IWindow.Settings.WindowHeight}";//
+            ScaleValue= new Label(40, new Vector2f((float)IWindow.Settings.WindowWidth / 1.5f+70, Scale.Text.Position.Y));
+            ScaleValue.Text.DisplayedString = "1";
         }
 
         private void SetButtons()
@@ -60,23 +69,21 @@ namespace Game
             Apply = new Button("apply.png", new Vector2f(IWindow.Settings.WindowWidth - 325, IWindow.Settings.WindowHeight - 105));
             Cancel = new Button("back.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
             float X = (float)IWindow.Settings.WindowWidth / 1.5f;
-            ResolutionValue = new Label("19702.otf", 40, new Vector2f(X, Resolution.Text.Position.Y), 4, Color.White);
-            ResolutionValue.Text.DisplayedString = $"{IWindow.Settings.WindowWidth}x{IWindow.Settings.WindowHeight}";
-            ResolutionChange= new Button("change.png", new Vector2f(X+175, Resolution.Text.Position.Y));
+            ResolutionChange = new Button("change.png", new Vector2f(X + 175, Resolution.Text.Position.Y));
+            ScaleChange = new Button("change.png", new Vector2f(X + 175, Scale.Text.Position.Y));
             if (IWindow.Settings.VSync)
-                VSyncSwitch = new Button("switchon.png", new Vector2f(X, VSync.Text.Position.Y));
+                VSyncSwitch = new SwitchButton("switchon.png", new Vector2f(X, VSync.Text.Position.Y));
             else
-                VSyncSwitch = new Button("switchoff.png", new Vector2f(X, VSync.Text.Position.Y));
+                VSyncSwitch = new SwitchButton("switchoff.png", new Vector2f(X, VSync.Text.Position.Y));
             ///
-            SoundSwitch= new Button("switchon.png", new Vector2f(X, Sound.Text.Position.Y));
-            ClipSwitch = new Button("switchon.png", new Vector2f(X, Clip.Text.Position.Y));
+            SoundSwitch = new SwitchButton("switchon.png", new Vector2f(X, Sound.Text.Position.Y));//!
+            ClipSwitch = new SwitchButton("switchon.png", new Vector2f(X, Clip.Text.Position.Y));//!
         }
 
         public void View()
         {
             while (!Exit)
             {
-
                 Window.DispatchEvents();
                 Window.Clear();
                 Window.Draw(Background);
@@ -87,7 +94,9 @@ namespace Game
                 Window.Draw(Sound.Text);
                 Window.Draw(Clip.Text);
                 Window.Draw(ResolutionValue.Text);
+                Window.Draw(ScaleValue.Text);
                 ResolutionChange.Draw(Window);
+                ScaleChange.Draw(Window);
                 VSyncSwitch.Draw(Window);
                 SoundSwitch.Draw(Window);
                 ClipSwitch.Draw(Window);
@@ -106,6 +115,7 @@ namespace Game
             {
                 if (ButtonisDown)
                     return;
+                ButtonisDown = true;
                 if (ResolutionChange.isPicked)
                 {
                     if (ResolutionValue.Text.DisplayedString == "1366x768")
@@ -114,29 +124,32 @@ namespace Game
                         ResolutionValue.Text.DisplayedString = "1366x768";
                 }
                 else if (VSyncSwitch.isPicked)
-                {
-                    VSyncSwitch.Sprite.Texture= new Texture($"GameTextures/switchoff.png");
-                }
+                    VSyncSwitch.Switch();
                 else if (SoundSwitch.isPicked)
-                {
-                    SoundSwitch.Sprite.Texture = new Texture($"GameTextures/switchoff.png");
-                }
+                    SoundSwitch.Switch();
                 else if (ClipSwitch.isPicked)
+                    ClipSwitch.Switch();
+                else if (ScaleChange.isPicked)
                 {
-                    ClipSwitch.Sprite.Texture = new Texture($"GameTextures/switchoff.png");
+                    if (Scales.Find(ScaleValue.Text.DisplayedString).Next != null)
+                        ScaleValue.Text.DisplayedString = Scales.Find(ScaleValue.Text.DisplayedString).Next.Value;
+                    else
+                        ScaleValue.Text.DisplayedString = Scales.First.Value;
                 }
                 else if (Cancel.isPicked)
-                {
                     Exit = true;
-                }
                 else if (Apply.isPicked)
                 {
                     Exit = true;  // Применение выставленных настроек
                 }
-                ButtonisDown = true;
             }
             else
                 ButtonisDown = false;
+        }
+
+        private void WindowClose(object sender, EventArgs e)
+        {
+            Window.Close();
         }
     }
 }

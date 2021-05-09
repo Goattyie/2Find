@@ -28,6 +28,7 @@ namespace Game
         public CreateServer(RenderWindow window)
         {
             Window = window;
+            Window.Closed += WindowClose;
             Window.TextEntered += Window_TextEntered;
             Connection = new Connection();
             Connection.ReceiveIp();
@@ -40,13 +41,13 @@ namespace Game
 
         private void SetLabels()
         {
-            ModeHeader = new Label("19702.otf", 40, new Vector2f(IWindow.Settings.WindowWidth / 3, IWindow.Settings.WindowHeight / 3), 4, Color.White);
+            ModeHeader = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 3, IWindow.Settings.WindowHeight / 3));
             ModeHeader.Text.DisplayedString = "Выбор уровня сложности";
-            CurrentMode = new Label("19702.otf", 40, new Vector2f(ModeHeader.Text.Position.X + 150, ModeHeader.Text.Position.Y + 100), 4, Color.White);
+            CurrentMode = new Label(40, new Vector2f(ModeHeader.Text.Position.X + 150, ModeHeader.Text.Position.Y + 100));
             CurrentMode.Text.DisplayedString = Modes.First.Value;
-            Status = new Label("19702.otf", 40, new Vector2f(IWindow.Settings.WindowWidth / 3, 125), 4, Color.White);
+            Status = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 3, 125));
             Status.Text.DisplayedString = "Ожидание второго игрока...";
-            IpLabel = new Label("19702.otf", 45, new Vector2f(25, 25), 4, Color.White);
+            IpLabel = new Label(45, new Vector2f(25, 25));
             IpLabel.Text.DisplayedString = "IP: " + Connection.Ip.ToString();
         }
         private void SetButtons()
@@ -117,6 +118,11 @@ namespace Game
             }
             else
                 ButtonisDown = false;
+        }
+
+        private void WindowClose(object sender, EventArgs e)
+        {
+            Window.Close();
         }
     }
 }
