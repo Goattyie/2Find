@@ -53,7 +53,7 @@ namespace Game
         private void SetButtons()
         {
             Start = new Button("start.png", new Vector2f(IWindow.Settings.WindowWidth - 325, IWindow.Settings.WindowHeight - 105));
-            Cancel = new Button("cancel.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
+            Cancel = new Button("back.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
             ModeChange = new Button("change.png", new Vector2f(CurrentMode.Text.Position.X + 150, CurrentMode.Text.Position.Y));
         }
 

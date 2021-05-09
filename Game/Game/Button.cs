@@ -11,7 +11,7 @@ namespace Game
 {
     class Button
     {
-        Sprite Sprite { get; set; } = new Sprite();
+        public Sprite Sprite { get; set; } = new Sprite();
         public bool isPicked{ get; set; }
         
         public Button(string texture, Vector2f pos)
@@ -25,8 +25,8 @@ namespace Game
             Sprite.Color = Color.White;
             isPicked = false;
             if (Sprite.GetGlobalBounds().Contains(Mouse.GetPosition(window).X, Mouse.GetPosition(window).Y)) 
-            { 
-                Sprite.Color= Color.Red;
+            {
+                Sprite.Color = new Color(160, 160, 160);
                 isPicked = true;
             }
             window.Draw(Sprite);

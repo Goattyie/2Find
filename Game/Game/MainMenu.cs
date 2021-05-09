@@ -68,15 +68,15 @@ namespace Game
             {
                 if (CreateServer.isPicked)
                 {
-                    CreateServer CreateServer = new CreateServer(Window);
+                    new CreateServer(Window);
                 }
                 else if (ConnectServer.isPicked)
                 {
-                    ConnectServer ConnectServer = new ConnectServer(Window);
+                    new ConnectServer(Window);
                 }
                 else if(SettingsButton.isPicked)
                 {
-                    Console.WriteLine("settings");
+                    new SettingsMenu(Window);
                 }
                 else if (About.isPicked)
                 {

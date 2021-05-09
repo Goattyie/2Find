@@ -35,11 +35,11 @@ namespace Game
             Status = new Label("19702.otf", 40, new Vector2f(200, 200), 4, Color.White);
             TextBox = new TextBox(new Vector2f(IpLabel.Text.Position.X + 60, IpLabel.Text.Position.Y), new Vector2f(450, 50), "romand__.ttf", 38);
             Connect = new Button("connect.png", new Vector2f(IWindow.Settings.WindowWidth - 525, IWindow.Settings.WindowHeight - 105));
-            Cancel = new Button("cancel.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
+            Cancel = new Button("back.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
             View();
         }
 
-        pprivate void NextStep()
+        private void NextStep()
         {
             EndEnter = true;
             Connection = new Connection(TextBox.String);
