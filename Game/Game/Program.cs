@@ -7,7 +7,8 @@ namespace Game
     {
         static void Main(string[] args)
         {
-            Game game = new Game(new Settings(1366, 768, "Two One", true, true), new EasyGameSettings());
+            Settings settings= new Settings(1366, 768, "Two One", true, true); //в будущем считывание настроек из сохраненного файла
+            MainMenu menu = new MainMenu(settings);
         }
     }
 }

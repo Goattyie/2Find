@@ -13,15 +13,14 @@ namespace Game
         protected Texture Model;
         protected virtual float Speed { get; set; } = 8f;
         protected Entity() { }
-        protected Entity(string textureFile, float scale)
+        protected Entity(string textureFile)
         {
             Model = new Texture($"GameTextures/{textureFile}");
             Sprite.Texture = Model;
-            Sprite.Scale *= scale;
-            Width = (int)(Model.Size.X * scale);
-            Height = (int)(Model.Size.Y * scale);
             Size = new int[] { Width, Height };
-            Speed *= scale;
+            Width = (int)Model.Size.X;
+            Height = (int)Model.Size.Y;
+            Size = new int[] { Width, Height };
         }
         public int VisibleRange { get; set; } = 450;
         public int[] Size { get; set; }

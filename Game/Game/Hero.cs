@@ -16,7 +16,7 @@ namespace Game
         
 
         Hero():base() { }
-        public Hero(string textureFile, float scale):base(textureFile, scale)
+        public Hero(string textureFile):base(textureFile)
         {
             
             CollisionBlock = new RectangleShape[4];

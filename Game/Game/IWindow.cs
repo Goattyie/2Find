@@ -6,7 +6,7 @@ namespace Game
 {
     interface IWindow
     {
-        Settings Settings { get; set; }
+        protected static Settings Settings { get; set; }
         RenderWindow Window { get; set; }
        
         public void View(); //Открыть окно

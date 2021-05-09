@@ -8,20 +8,17 @@ namespace Game
     class Game : IWindow
     {
         public int GameStatus { get; set; } = 0;
-        public Settings Settings { get; set; }
         private IGameSettings GameSettings { get; set; }
         public RenderWindow Window { get; set; }
         Hero[] Heroes { get; set; }
         Enemy[] Enemies { get; set; }
         World Map { get; set; }
+
         Game() { }
-        public Game(Settings settings, IGameSettings gameSettings) 
+        public Game(RenderWindow window,IGameSettings gameSettings) 
         {
             GameSettings = gameSettings;
-            Settings = settings;
-            Window = new RenderWindow(new SFML.Window.VideoMode((uint)Settings.WindowWidth, (uint)Settings.WindowHeight), Settings.WindowName);
-            Window.SetVerticalSyncEnabled(Settings.VSync);
-
+            Window = window;
             //События
             Window.Closed += WindowClose;
             //Window.KeyPressed += KeyController;
@@ -32,7 +29,7 @@ namespace Game
         }
         private void SpawnEntityes()
         {
-            Heroes = new Hero[] { new Hero("Hero1.png", GameSettings.Scale) };
+            Heroes = new Hero[] { new Hero("Hero1.png") };
             for(int i = 0; i < Heroes.Length; i++)
             {
                 //Heroes[i].RandomSpawn(Map.GameField);
@@ -42,7 +39,7 @@ namespace Game
             Enemies = new Enemy[GameSettings.CountDefaultEnemy];
             for(int i = 0; i < GameSettings.CountDefaultEnemy; i++) 
             {
-                Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField, GameSettings.Scale);
+                Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField);
                 Enemies[i].Spawn(4, 4);
             }
 
@@ -88,7 +85,7 @@ namespace Game
             {
                 Map.Render(Window, hero.Position);
             }
-            
+
         }
         private void RenderEnemies()
         {

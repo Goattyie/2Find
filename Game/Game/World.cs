@@ -15,7 +15,7 @@ namespace Game
         private WorldTextures Block { get; set; }
         public World(IGameSettings igs) 
         {
-            Block = new WorldTextures(igs.Scale);
+            Block = new WorldTextures();
             StreamReader sr = new StreamReader("Maps/Default.txt");
             File.ReadAllLines("Maps/Default.txt");
             GameField = new string[File.ReadAllLines("Maps/Default.txt").Length];

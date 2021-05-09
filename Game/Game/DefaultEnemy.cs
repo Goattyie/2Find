@@ -12,7 +12,7 @@ namespace Game
     {
 
         DefaultEnemy() { }
-        public DefaultEnemy(string texture, string[] gamefield, float scale):base(texture, scale)
+        public DefaultEnemy(string texture, string[] gamefield):base(texture)
         {
             GameField = gamefield;
         }
