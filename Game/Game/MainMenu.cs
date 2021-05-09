@@ -18,25 +18,31 @@ namespace Game
         Button Exit { get; set; }
         CreateServer Create { get; set; }
         ConnectServer Connect { get; set; }
-        SettingsMenu Settings { get; set; }
+        SettingsMenu SettingsMenu { get; set; }
         public RenderWindow Window { get; set; }
         Sprite Background { get; set; } = new Sprite();//пока что картинкой
 
-        public MainMenu(Settings settings)
+        public MainMenu()
         {
-            IWindow.Settings = settings;
-            CreateServerButton = new Button("createserver.png", new Vector2f(50,100));
+            IWindow.Settings = new Settings();
+            Window = new RenderWindow(new SFML.Window.VideoMode((uint)IWindow.Settings.WindowWidth, (uint)IWindow.Settings.WindowHeight), Settings.WindowName);
+            CreateServerButton = new Button("createserver.png", new Vector2f(50, 100));
             ConnectServerButton = new Button("connect.png", new Vector2f(50, 225));
             SettingsButton = new Button("settings.png", new Vector2f(50, 350));
             About = new Button("about.png", new Vector2f(50, 475));
             Exit = new Button("exit.png", new Vector2f(50, 600));
             Background.Texture = new Texture("GameTextures/background.png");
-            Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366,(float)IWindow.Settings.WindowHeight / (float)768);///hgvhjg
-            Window = new RenderWindow(new SFML.Window.VideoMode((uint)IWindow.Settings.WindowWidth, (uint)IWindow.Settings.WindowHeight), IWindow.Settings.WindowName);
+            Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
             Window.SetVerticalSyncEnabled(IWindow.Settings.VSync);
             Window.Closed += WindowClose;
             //Window.KeyPressed += KeyPressed;
             View();
+        }
+        private void SetInterface()
+        {
+            Window.Position = new Vector2i(0, 0);
+            Window.Size = new Vector2u((uint)IWindow.Settings.WindowWidth, (uint)IWindow.Settings.WindowHeight);
+            
         }
 
         public void View()
@@ -83,9 +89,10 @@ namespace Game
                 }
                 else if(SettingsButton.isPicked)
                 {
-                    if (Settings == null)
-                        Settings = new SettingsMenu(Window);
-                    Settings.View();
+                    if (SettingsMenu == null)
+                        SettingsMenu = new SettingsMenu(Window);
+                    SettingsMenu.View();
+                    SetInterface();
                 }
                 else if (About.isPicked)
                 {

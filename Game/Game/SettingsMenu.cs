@@ -140,6 +140,14 @@ namespace Game
                     Exit = true;
                 else if (Apply.isPicked)
                 {
+                    string[] size = ResolutionValue.Text.DisplayedString.Split("x");
+                    IWindow.Settings.WindowWidth = Convert.ToInt32(size[0]);
+                    IWindow.Settings.WindowHeight = Convert.ToInt32(size[1]);
+                    IWindow.Settings.VSync = VSyncSwitch.State;
+                    IWindow.Settings.Sound = SoundSwitch.State;
+                    IWindow.Settings.Scaling = (float)Convert.ToDouble(ScaleValue.Text.DisplayedString);
+                    IWindow.Settings.Scene = ClipSwitch.State;
+                    IWindow.Settings.WriteSettingsToFile();
                     Exit = true;  // Применение выставленных настроек
                 }
             }

@@ -1,50 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace Game
 {
     class Settings
     {
+        private static string FilePath { get; } = "Settings.txt";
         public int[] WindowSize { get; set; } //Свойство
         public int WindowHeight { get; set; }
         public int WindowWidth { get; set; }
-        public string WindowName { get; set; }
-        public bool Scaling { get; set; }
+        public static string WindowName { get; set; } = "2 Find";
+        public float Scaling { get; set; }
         public bool VSync { get; set; }
         public bool Fulscreen { get; set; }
+        public bool Sound { get; set; }
+        public bool Scene { get; set; }
         
+        public Settings() 
+        {
+            if (!File.Exists(FilePath))
+                ToDefaultSettings();
 
-        private Settings() { }
-        public Settings(int window_width, int window_height, string window_name)
-        {
-            WindowHeight = window_height;
-            WindowWidth = window_width;
-            WindowSize = new int[] { window_width, window_height };
-            WindowName = window_name;
-            Scaling = false;
-            VSync = false;
-        }
-        public Settings(int window_width, int window_height, string window_name, bool scaling)
-        {
-            WindowHeight = window_height;
-            WindowWidth = window_width;
-            WindowSize = new int[] { window_width, window_height };
-            WindowName = window_name;
-            Scaling = scaling;
-            VSync = false;
-        }
-        public Settings(int window_width, int window_height, string window_name, bool scaling, bool vsync)
-        {
-            WindowHeight = window_height;
-            WindowWidth = window_width;
-            WindowSize = new int[] { window_width, window_height };
-            WindowName = window_name;
-            Scaling = scaling;
-            VSync = vsync;
-        }
+            StreamReader sr = new StreamReader(FilePath);
+            try
+            {
+                string[] width = sr.ReadLine().Split("Width =");
+                WindowWidth = Convert.ToInt32(width[1].Trim(' '));
 
+                string[] height = sr.ReadLine().Split("Height =");
+                WindowHeight = Convert.ToInt32(height[1].Trim(' '));
+
+                string[] vsync = sr.ReadLine().Split("VSync =");
+                VSync = Convert.ToBoolean(vsync[1].Trim(' '));
+
+                string[] scale = sr.ReadLine().Split("Scale =");
+                Scaling = (float)Convert.ToDouble(scale[1].Trim(' '));
+
+                string[] sound = sr.ReadLine().Split("Sound =");
+                Sound = Convert.ToBoolean(sound[1].Trim(' '));
+
+                string[] scene = sr.ReadLine().Split("Scene =");
+                Scene = Convert.ToBoolean(scene[1].Trim(' '));
+
+                sr.Close();
+
+            }
+            catch
+            {
+                sr.Close();
+                ToDefaultSettings(); 
+            }
+        }
+        
+        void ToDefaultSettings()
+        {
+            WindowWidth = 1366;
+            WindowHeight = 768;
+            VSync = true;
+            Scaling = 1;
+            Scene = true;
+            Sound = true;
+            WriteSettingsToFile();
+        }
+        public void WriteSettingsToFile()
+        {
+            StreamWriter sw = new StreamWriter(FilePath, false);
+            sw.WriteLine($"Width = {WindowWidth}");
+            sw.WriteLine($"Height = {WindowHeight}");
+            sw.WriteLine($"VSync = {VSync}");
+            sw.WriteLine($"Scale = {Scaling}");
+            sw.WriteLine($"Sound = {Sound}");
+            sw.WriteLine($"Scene = {Scene}");
+            sw.Close();
+        }
     }
 }
