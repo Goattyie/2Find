@@ -8,11 +8,10 @@ namespace Game
 {
     abstract class Enemy:Entity, IEnemy
     {
-        public string[] GameField { get; set; }
         public Hero HeroTarget { get; set; }
         protected Enemy() { }
         protected Enemy(string textureFile):base(textureFile) { }
-        public bool VisibleRarget { get; set; } = false;
-        public void AI() { }
+        public bool VisibleTarget { get; set; } = false;
+        public abstract void AI();
     }
 }

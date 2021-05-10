@@ -12,13 +12,12 @@ namespace Game
         public RectangleShape Hitbox { get; set; } = new RectangleShape();
         public RectangleShape[] CollisionBlock { get; set; }
 
-        protected override float Speed { get; set; } = 8f;
+        protected override float Speed { get; set; } = 3f;
         
 
         Hero():base() { }
         public Hero(string textureFile):base(textureFile)
         {
-            
             CollisionBlock = new RectangleShape[4];
             for(int i = 0; i < CollisionBlock.Length; i++)
             {
@@ -98,16 +97,16 @@ namespace Game
         
         public void Collision(char back, char right, char forward, char left) 
         {
-            if ((back > 47 && back < 70) || (back > 96 && back < 102))
+            if (!WorldTextures.IsWay(back))
                 CollisionBlock[0].Position = new Vector2f(Position[0] * WorldTextures.BlockSize[0], (Position[1] + 1) * WorldTextures.BlockSize[1]);
 
-            if ((right > 47 && right < 70) || (right > 96 && right < 102))
+            if (!WorldTextures.IsWay(right))
                 CollisionBlock[1].Position = new Vector2f((Position[0] + 1) * WorldTextures.BlockSize[0], Position[1] * WorldTextures.BlockSize[1]);
 
-            if ((forward > 47 && forward < 70) || (forward > 96 && forward < 102))
+            if (!WorldTextures.IsWay(forward))
                 CollisionBlock[2].Position = new Vector2f(Position[0] * WorldTextures.BlockSize[0], (Position[1] - 1) * WorldTextures.BlockSize[1]);
 
-            if ((left > 47 && left < 70) || (left > 96 && left < 102))
+            if (!WorldTextures.IsWay(left))
                 CollisionBlock[3].Position = new Vector2f((Position[0] - 1) * WorldTextures.BlockSize[0], Position[1] * WorldTextures.BlockSize[1]);
         }   
 

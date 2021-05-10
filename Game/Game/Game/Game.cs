@@ -40,7 +40,7 @@ namespace Game
             for(int i = 0; i < GameSettings.CountDefaultEnemy; i++) 
             {
                 Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField);
-                Enemies[i].Spawn(4, 4);
+                Enemies[i].Spawn(6, 6);
             }
 
         }
@@ -91,7 +91,12 @@ namespace Game
         {
             for(int i = 0; i < Enemies.Length; i++)
             {
-                //Console.WriteLine(Enemies[i].SeeOtherEntity((Entity)Enemies[i], Heroes[0], Map.GameField));
+                foreach(Hero heroes in Heroes)
+                {
+                    if (Enemies[i].HeroTarget == null && Enemies[i].SeeOtherEntity(heroes, Map.GameField))
+                        Enemies[i].HeroTarget = heroes;
+                }
+                Enemies[i].AI();
             }
         }
 

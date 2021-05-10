@@ -9,7 +9,6 @@ namespace Game
 {
     interface IEnemy
     {
-        string[] GameField { get; set; }
         Hero HeroTarget { get; set; }
         void AI();
     }

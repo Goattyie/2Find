@@ -43,7 +43,12 @@ namespace Game
             ground9 = new Texture("MapTextures/ground9.png");
             Block.Size = new Vector2f(BlockSize[0], BlockSize[1]);
         }
-
+        public static bool IsWay(char c)
+        {
+            if ((c > 47 && c < 70) || (c > 96 && c < 102))
+                return false;
+            return true;
+        }
         public RectangleShape View(char symbol, int x, int y)
         {
             SetTexture(symbol);
