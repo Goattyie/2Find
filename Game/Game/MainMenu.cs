@@ -42,7 +42,16 @@ namespace Game
         {
             Window.Position = new Vector2i(0, 0);
             Window.Size = new Vector2u((uint)IWindow.Settings.WindowWidth, (uint)IWindow.Settings.WindowHeight);
-            
+            Background.Scale=new Vector2f(1,1);
+            Vector2f NewScale= new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
+            Background.Scale = NewScale;
+            Window.SetView(new View(new Vector2f(IWindow.Settings.WindowWidth / 2.0f, IWindow.Settings.WindowHeight / 2.0f), 
+                new Vector2f(IWindow.Settings.WindowWidth, IWindow.Settings.WindowHeight)));
+            SettingsMenu.RefreshView(NewScale);
+            if(Create!=null)
+                Create.RefreshView(NewScale);
+            if(Connect!=null)
+                Connect.RefreshView(NewScale);
         }
 
         public void View()
@@ -99,9 +108,7 @@ namespace Game
                     Console.WriteLine("About");
                 }
                 else if (Exit.isPicked)
-                {
                     Window.Close();
-                }
             }
         }
 

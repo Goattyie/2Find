@@ -59,7 +59,7 @@ namespace Game
 
         public void View()
         {
-            while (!Exit)
+            while (Window.IsOpen && !Exit)
             {
                 Window.DispatchEvents();
                 Window.Clear();
@@ -81,13 +81,20 @@ namespace Game
         {
             char key = e.Unicode.Cast<char>().First();
             if (key == 13)
-            {
                 StartGame();
-            }
             else if (key == 27)
-            {
                 Exit = true;
-            }
+        }
+
+        public void RefreshView(Vector2f scale)
+        {
+            Background.Scale = scale;
+            ModeHeader.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 3, IWindow.Settings.WindowHeight / 3);
+            CurrentMode.Text.Position = new Vector2f(ModeHeader.Text.Position.X + 150, ModeHeader.Text.Position.Y + 100);
+            Status.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 3, 125);
+            Start.Sprite.Position = new Vector2f(IWindow.Settings.WindowWidth - 325, IWindow.Settings.WindowHeight - 105);
+            Cancel.Sprite.Position = new Vector2f(25, IWindow.Settings.WindowHeight - 105);
+            ModeChange.Sprite.Position = new Vector2f(CurrentMode.Text.Position.X + 150, CurrentMode.Text.Position.Y);
         }
 
         private void StartGame()
@@ -108,13 +115,9 @@ namespace Game
                     ButtonisDown = true;
                 }
                 else if (Start.isPicked)
-                {
                     StartGame();
-                }
                 else if (Cancel.isPicked)
-                {
                     Exit = true;
-                }
             }
             else
                 ButtonisDown = false;

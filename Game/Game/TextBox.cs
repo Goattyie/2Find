@@ -15,12 +15,12 @@ namespace Game
         Label InputText { get; set; }
         private RectangleShape Form { get; set; } = new RectangleShape();
 
-        public TextBox(Vector2f pos, Vector2f size, string file, uint charsize)
+        public TextBox(Vector2f pos, Vector2f size, uint charsize)
         {
             Form.Position = pos;
             Form.Size = size;
             Form.FillColor = Color.White;
-            InputText = new Label(file, charsize, pos, 1, Color.Black);
+            InputText = new Label("romand__.ttf", charsize, pos, 1, Color.Black);
             String = "";
         }
 

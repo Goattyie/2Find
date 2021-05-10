@@ -59,9 +59,7 @@ namespace Game
             Clip = new Label(40, new Vector2f(IWindow.Settings.WindowWidth / 10, 550));
             Clip.Text.DisplayedString = "Вступительный ролик";
             ResolutionValue = new Label(40, new Vector2f((float)IWindow.Settings.WindowWidth / 1.5f, Resolution.Text.Position.Y));
-            ResolutionValue.Text.DisplayedString = $"{IWindow.Settings.WindowWidth}x{IWindow.Settings.WindowHeight}";//
             ScaleValue= new Label(40, new Vector2f((float)IWindow.Settings.WindowWidth / 1.5f+70, Scale.Text.Position.Y));
-            ScaleValue.Text.DisplayedString = "1";
         }
 
         private void SetButtons()
@@ -71,18 +69,48 @@ namespace Game
             float X = (float)IWindow.Settings.WindowWidth / 1.5f;
             ResolutionChange = new Button("change.png", new Vector2f(X + 175, Resolution.Text.Position.Y));
             ScaleChange = new Button("change.png", new Vector2f(X + 175, Scale.Text.Position.Y));
-            if (IWindow.Settings.VSync)
-                VSyncSwitch = new SwitchButton("switchon.png", new Vector2f(X, VSync.Text.Position.Y));
-            else
-                VSyncSwitch = new SwitchButton("switchoff.png", new Vector2f(X, VSync.Text.Position.Y));
-            ///
+            VSyncSwitch = new SwitchButton("switchon.png", new Vector2f(X, VSync.Text.Position.Y));
             SoundSwitch = new SwitchButton("switchon.png", new Vector2f(X, Sound.Text.Position.Y));//!
             ClipSwitch = new SwitchButton("switchon.png", new Vector2f(X, Clip.Text.Position.Y));//!
         }
 
+        private void SetButtonsSettings()
+        {
+            ResolutionValue.Text.DisplayedString = $"{IWindow.Settings.WindowWidth}x{IWindow.Settings.WindowHeight}";
+            if (IWindow.Settings.VSync && !VSyncSwitch.State || !IWindow.Settings.VSync && VSyncSwitch.State)
+                VSyncSwitch.Switch();
+            if(IWindow.Settings.Sound && !SoundSwitch.State || !IWindow.Settings.Sound && SoundSwitch.State)
+                SoundSwitch.Switch();
+            if (IWindow.Settings.Scene && !ClipSwitch.State || !IWindow.Settings.Scene && ClipSwitch.State)
+                ClipSwitch.Switch();
+            ScaleValue.Text.DisplayedString = IWindow.Settings.Scaling.ToString().Replace(',', '.');
+        }
+
+        public void RefreshView(Vector2f scale)
+        {
+            Background.Scale = scale;
+            float X = (float)IWindow.Settings.WindowWidth / 1.5f;
+            Header.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 2 - 100, 50);
+            /*Resolution.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 10, 150);
+            VSync.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 10, 250);
+            Scale.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 10, 350);
+            Sound.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 10, 450);
+            Clip.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 10, 550);*/
+            ResolutionValue.Text.Position = new Vector2f(X, Resolution.Text.Position.Y);
+            ScaleValue.Text.Position = new Vector2f(X + 70, Scale.Text.Position.Y);
+            Cancel.Sprite.Position = new Vector2f(25, IWindow.Settings.WindowHeight - 105);
+            Apply.Sprite.Position = new Vector2f(IWindow.Settings.WindowWidth - 325, IWindow.Settings.WindowHeight - 105);
+            VSyncSwitch.Sprite.Position = new Vector2f(X, VSync.Text.Position.Y);
+            SoundSwitch.Sprite.Position = new Vector2f(X, Sound.Text.Position.Y);
+            ClipSwitch.Sprite.Position = new Vector2f(X, Clip.Text.Position.Y);
+            ResolutionChange.Sprite.Position = new Vector2f(X + 175, Resolution.Text.Position.Y);
+            ScaleChange.Sprite.Position = new Vector2f(X + 175, Scale.Text.Position.Y);
+        }
+
         public void View()
         {
-            while (!Exit)
+            SetButtonsSettings();
+            while (Window.IsOpen && !Exit)
             {
                 Window.DispatchEvents();
                 Window.Clear();
@@ -145,10 +173,13 @@ namespace Game
                     IWindow.Settings.WindowHeight = Convert.ToInt32(size[1]);
                     IWindow.Settings.VSync = VSyncSwitch.State;
                     IWindow.Settings.Sound = SoundSwitch.State;
-                    IWindow.Settings.Scaling = (float)Convert.ToDouble(ScaleValue.Text.DisplayedString);
+                    IWindow.Settings.Scaling = float.Parse(ScaleValue.Text.DisplayedString,
+                        System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                     IWindow.Settings.Scene = ClipSwitch.State;
                     IWindow.Settings.WriteSettingsToFile();
-                    Exit = true;  // Применение выставленных настроек
+                    Background.Scale = new Vector2f(1, 1);
+                    Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
+                    Exit = true;
                 }
             }
             else

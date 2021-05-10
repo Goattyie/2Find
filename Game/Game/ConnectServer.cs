@@ -34,7 +34,7 @@ namespace Game
             IpLabel = new Label(45, new Vector2f(IWindow.Settings.WindowWidth / 3, IWindow.Settings.WindowHeight / 2));
             IpLabel.Text.DisplayedString = "IP:";
             Status = new Label(40, new Vector2f(200, 200));
-            TextBox = new TextBox(new Vector2f(IpLabel.Text.Position.X + 60, IpLabel.Text.Position.Y), new Vector2f(450, 50), "romand__.ttf", 38);
+            TextBox = new TextBox(new Vector2f(IpLabel.Text.Position.X + 60, IpLabel.Text.Position.Y), new Vector2f(450, 50), 38);
             Connect = new Button("connect.png", new Vector2f(IWindow.Settings.WindowWidth - 525, IWindow.Settings.WindowHeight - 105));
             Cancel = new Button("back.png", new Vector2f(25, IWindow.Settings.WindowHeight - 105));
         }
@@ -48,26 +48,28 @@ namespace Game
         {
             char key = e.Unicode.Cast<char>().First();
             if (key > 47 && key < 58 || key == 46)
-            {
                 TextBox.Append(key);
-            }
             else if (key == 8)
-            {
                 TextBox.Backspace();
-            }
             else if (key == 13)
-            {
                 NextStep();
-            }
             else if (key == 27)
-            {
                 Exit = true;
-            }
+        }
+
+        public void RefreshView(Vector2f scale)
+        {
+            Background.Scale = scale;
+            IpLabel.Text.Position = new Vector2f(IWindow.Settings.WindowWidth / 3, IWindow.Settings.WindowHeight / 2);
+            Status.Text.Position= new Vector2f(200, 200);///!!!
+            TextBox = new TextBox(new Vector2f(IpLabel.Text.Position.X + 60, IpLabel.Text.Position.Y), new Vector2f(450, 50), 38);
+            Connect.Sprite.Position = new Vector2f(IWindow.Settings.WindowWidth - 525, IWindow.Settings.WindowHeight - 105);
+            Cancel.Sprite.Position = new Vector2f(25, IWindow.Settings.WindowHeight - 105);
         }
 
         public void View()
         {
-            while (!Exit)
+            while (Window.IsOpen && !Exit)
             {
                 Window.DispatchEvents();
                 Window.Clear();
@@ -79,14 +81,13 @@ namespace Game
                     TextBox.Draw(Window);
                 }
                 else
-                {
                     Window.Draw(Status.Text);
-                }
                 Cancel.Draw(Window);
                 ButtonActions();
                 Window.Display();
             }
             Exit = false;
+            EndEnter = false;
         }
 
         private void ButtonActions()
@@ -99,9 +100,7 @@ namespace Game
                     NextStep();
                 }
                 else if (Cancel.isPicked)
-                {
                     Exit = true;
-                }
             }
         }
 
