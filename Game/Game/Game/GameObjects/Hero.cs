@@ -12,7 +12,7 @@ namespace Game
         public RectangleShape Hitbox { get; set; } = new RectangleShape();
         public RectangleShape[] CollisionBlock { get; set; }
 
-        protected override float Speed { get; set; } = 3f;
+        protected override float Speed { get; set; } = 2f;
         
 
         Hero():base() { }
@@ -29,9 +29,9 @@ namespace Game
             Hitbox.Size = new Vector2f(Width, Height);
             Hitbox.Position = Sprite.Position;
         }
-        public void Left() 
+        public void Left(float time) 
         {
-            Hitbox.Position = Sprite.Position + new Vector2f(-Speed, 0);
+            Hitbox.Position = Sprite.Position + new Vector2f(-Speed*time, 0);
             foreach (RectangleShape rs in CollisionBlock)
             {
                 if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
@@ -41,13 +41,13 @@ namespace Game
                 }
 
             }
-            Sprite.Position = Sprite.Position + new Vector2f(-Speed, 0);
+            Sprite.Position = Sprite.Position + new Vector2f(-Speed * time, 0);
             Hitbox.Position = Sprite.Position;
             
         }
-        public void Right() 
+        public void Right(float time) 
         {
-            Hitbox.Position = Sprite.Position + new Vector2f(Speed, 0);
+            Hitbox.Position = Sprite.Position + new Vector2f(Speed * time, 0);
             foreach(RectangleShape rs in CollisionBlock)
             {
                 if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
@@ -57,12 +57,12 @@ namespace Game
                 }
                     
             }
-            Sprite.Position = Sprite.Position + new Vector2f(Speed, 0);
+            Sprite.Position = Sprite.Position + new Vector2f(Speed * time, 0);
             Hitbox.Position = Sprite.Position;
         }
-        public void Forward() 
+        public void Forward(float time) 
         {
-            Hitbox.Position = Sprite.Position + new Vector2f(0, -Speed);
+            Hitbox.Position = Sprite.Position + new Vector2f(0, -Speed * time);
             foreach (RectangleShape rs in CollisionBlock)
             {
                 if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
@@ -72,13 +72,13 @@ namespace Game
                 }
 
             }
-            Sprite.Position = Sprite.Position + new Vector2f(0, -Speed);
+            Sprite.Position = Sprite.Position + new Vector2f(0, -Speed * time);
                 Hitbox.Position = Sprite.Position;
             
         }
-        public void Back() 
+        public void Back(float time) 
         {
-            Hitbox.Position = Sprite.Position + new Vector2f(0, +Speed);
+            Hitbox.Position = Sprite.Position + new Vector2f(0, +Speed * time);
             foreach (RectangleShape rs in CollisionBlock)
             {
                 if (RectangleCross(Hitbox.Position.X, Hitbox.Position.Y, rs.Position.X, rs.Position.Y))
@@ -88,7 +88,7 @@ namespace Game
                 }
 
             }
-            Sprite.Position = Sprite.Position + new Vector2f(0, +Speed);
+            Sprite.Position = Sprite.Position + new Vector2f(0, +Speed * time);
             Hitbox.Position = Sprite.Position;
             
         }

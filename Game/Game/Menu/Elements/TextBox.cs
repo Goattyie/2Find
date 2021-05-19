@@ -37,6 +37,17 @@ namespace Game
                 String = String.Insert(String.Length, c.ToString());
         }
 
+        public void Append(string s)
+        {
+            if (s.Length < 16)
+            {
+                foreach (char c in s)
+                    if (!Char.IsNumber(c) && c != '.')
+                        return;
+                String = s;
+            }
+        }
+
         public void Backspace()
         {
             if (String.Length > 0)

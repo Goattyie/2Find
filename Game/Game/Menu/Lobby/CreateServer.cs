@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SFML.System;
 using SFML.Window;
 
@@ -20,21 +18,20 @@ namespace Game
         Label CurrentMode { get; set; }
         Button ModeChange { get; set; }
         Sprite Background { get; set; } = new Sprite();
-        Connection Connection { get; set; }
+        public Connection Connection { get; set; }
         LinkedList<string> Modes { get; set; }
         bool ButtonisDown { get; set; }
         bool Exit { get; set; }
-        
+
         public CreateServer(RenderWindow window)
         {
             Window = window;
             Window.Closed += WindowClose;
             Window.TextEntered += Window_TextEntered;
             Connection = new Connection();
-            Connection.ReceiveIp();
             Background.Texture = new Texture("GameTextures/background.png");
             Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
-            Modes = new LinkedList<string>(new[] { "Лёгкий", "Средний","Сложный" });
+            Modes = new LinkedList<string>(new[] { "Лёгкий", "Средний", "Сложный" });
             SetLabels();
             SetButtons();
         }
@@ -59,13 +56,14 @@ namespace Game
 
         public void View()
         {
+            Connection.StartLobbyThread();
             while (Window.IsOpen && !Exit)
             {
                 Window.DispatchEvents();
                 Window.Clear();
                 Window.Draw(Background);
+                CheckStatus();
                 Window.Draw(IpLabel.Text);
-                Window.Draw(Status.Text);
                 Window.Draw(ModeHeader.Text);
                 Window.Draw(CurrentMode.Text);
                 ModeChange.Draw(Window);
@@ -74,7 +72,23 @@ namespace Game
                 ButtonActions();
                 Window.Display();
             }
+            Connection.ThreadStop = true;
             Exit = false;
+        }
+
+        private void CheckStatus()
+        {
+            if (Connection.Connected && Status.Text.DisplayedString == "Ожидание второго игрока...")
+            {
+                Status.Text.DisplayedString = "Второй игрок подключен";
+                Status.Text.FillColor = Color.Green;
+            }
+            else if (!Connection.Connected && Status.Text.DisplayedString == "Второй игрок подключен")
+            {
+                Status.Text.DisplayedString = "Ожидание второго игрока...";
+                Status.Text.FillColor = Color.White;
+            }
+            Window.Draw(Status.Text);
         }
 
         private void Window_TextEntered(object sender, TextEventArgs e)
@@ -99,7 +113,14 @@ namespace Game
 
         private void StartGame()
         {
-            new Game(Window, new EasyGameSettings());
+            if (!Connection.Connected)
+            {
+                Status.Text.FillColor = Color.Red;
+                return;
+            }
+            Connection.ThreadStop = true;
+            Connection.SendStart();
+            new Game(Window, new EasyGameSettings(),Connection);
         }
 
         private void ButtonActions()
