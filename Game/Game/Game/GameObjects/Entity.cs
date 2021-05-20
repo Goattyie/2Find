@@ -37,7 +37,7 @@ namespace Game
             {
                 y = new Random().Next(1, GameField.Length - 2);
                 x = new Random().Next(1, GameField[0].Length - 2);
-                if (!(GameField[y][x] > 47 && GameField[y][x] < 70) && !(GameField[y][x] > 47 && GameField[y][x] < 70))
+                if (WorldTextures.IsWay(GameField[y][x]))
                     break;
             }
             Spawn(x, y); 
@@ -46,7 +46,7 @@ namespace Game
         { 
             Sprite.Position = new Vector2f(x * WorldTextures.BlockSize[0] + WorldTextures.BlockSize[0]/2 - Width/2, y * WorldTextures.BlockSize[1] + WorldTextures.BlockSize[1] / 2 - Height / 2); 
         }
-        public bool SeeOtherEntity(Entity entity2, string[] VisibleChank) 
+        public virtual bool SeeOtherEntity(Entity entity2, string[] VisibleChank) 
         {
             if (this.Position[0] == entity2.Position[0] && this.Position[1] == entity2.Position[1])
                 return true;

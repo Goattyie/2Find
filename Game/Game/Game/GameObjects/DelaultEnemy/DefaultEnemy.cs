@@ -13,9 +13,10 @@ namespace Game
         static string[] Gamefield { get; set; } //Карта
         private string[] Map { get; set; }//Копия карты для алгоритма
         private List<Step> Steps = new List<Step>();
-        private readonly Clock Clock = new Clock();
-        private Time TargetTime { get; set; } //Время перерыва
+        private readonly Clock StopClock = new Clock();
+        private Time StopTime { get; set; } //Время перерыва
         protected override float Speed { get; set; } = 12;
+        protected override float MaxTriggerTime { get; set; } = 4f;
 
         DefaultEnemy() { }
         public DefaultEnemy(string texture, string[] gamefield):base(texture)
@@ -23,17 +24,16 @@ namespace Game
             Gamefield = new string[gamefield.Length];
             Array.Copy(gamefield, Gamefield, gamefield.Length);
             Map = new string[Gamefield.Length];
-            TargetTime = Clock.Restart();
+            StopTime = StopClock.Restart();
         }
 
         public override void AI()
         {
-            TargetTime = Clock.ElapsedTime;
-            if (HeroTarget == null || TargetTime.AsSeconds() < 10/Speed || (this.Position[0] == HeroTarget.Position[0] && this.Position[1] == HeroTarget.Position[1]))
+            StopTime = StopClock.ElapsedTime;
+            if (HeroTarget == null || StopTime.AsSeconds() < 10/Speed || (this.Position[0] == HeroTarget.Position[0] && this.Position[1] == HeroTarget.Position[1]))
                 return;
 
-            
-            TargetTime = Clock.Restart();
+            StopTime = StopClock.Restart();
             Array.Copy(Gamefield, Map, Gamefield.Length);
             char[] charStr = Map[HeroTarget.Position[1]].ToCharArray(); //строку в массив символов
             charStr[HeroTarget.Position[0]] = 'Z';

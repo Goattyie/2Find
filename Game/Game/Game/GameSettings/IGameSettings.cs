@@ -9,6 +9,7 @@ namespace Game
     interface IGameSettings
     {
         int CountDefaultEnemy { get; set; }
+        int CountGhost { get; set; }
         int VisibleRange { get; set; }
     }
 }

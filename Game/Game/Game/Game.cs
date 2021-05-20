@@ -35,15 +35,18 @@ namespace Game
         {
             Heroes = new Hero[] { new Hero("Hero1.png"), new Hero("Hero1.png") };
             Heroes[0].RandomSpawn(Map.GameField);
-            Enemies = new Enemy[GameSettings.CountDefaultEnemy];
+            Enemies = new Enemy[GameSettings.CountGhost + GameSettings.CountDefaultEnemy];
             for (int i = 0; i < GameSettings.CountDefaultEnemy; i++)
             {
                 Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField);
-                Enemies[i].Spawn(6, 6);
+                Enemies[i].RandomSpawn(Map.GameField);
             }
-
+            for (int i = GameSettings.CountDefaultEnemy; i < GameSettings.CountDefaultEnemy + GameSettings.CountGhost; i++)
+            {
+                Enemies[i] = new Ghost("DefaultEnemy.png", Map.GameField);
+                Enemies[i].RandomSpawn(Map.GameField);
+            }
         }
-
         private void SetCameras()
         {
             Camera1 = new View(new Vector2f(IWindow.Settings.WindowWidth / 4.0f, IWindow.Settings.WindowHeight / 2.0f),
@@ -53,7 +56,6 @@ namespace Game
             Camera1.Viewport = new FloatRect(0f, 0f, 0.5f, 1f);
             Camera2.Viewport = new FloatRect(0.5f, 0f, 0.5f, 1f);
         }
-
         public void View()
         {
             Connection.StartReceiving();
@@ -69,7 +71,9 @@ namespace Game
                 Window.SetView(Camera1);
                 RenderMap(0);
                 Heroes[0].Collision(Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] + 1], 
-                    Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] - 1]);
+                    Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] - 1],
+                    Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] - 1], Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] - 1], 
+                    Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] + 1], Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] + 1]);
                 RenderHeroes(false);
                 RenderEnemies(0);
                 Heroes[1].Sprite.Position = Connection.ReceivedPos;
@@ -104,17 +108,15 @@ namespace Game
         {
             Map.Render(Window, Heroes[i].Position);
         }
-
         private void RenderEnemies(int hero)
         {
             for (int i = 0; i < Enemies.Length; i++)
             {
-                if (Enemies[i].HeroTarget == null && Enemies[i].SeeOtherEntity(Heroes[hero], Map.GameField))
+                if (Enemies[i].SeeOtherEntity(Heroes[hero], Map.GameField))
                     Enemies[i].HeroTarget = Heroes[hero];
                 Enemies[i].AI();
             }
         }
-
         public void WindowClose(object sender, EventArgs e)
         {
             Window.Close();

@@ -18,7 +18,7 @@ namespace Game
         Hero():base() { }
         public Hero(string textureFile):base(textureFile)
         {
-            CollisionBlock = new RectangleShape[4];
+            CollisionBlock = new RectangleShape[8];
             for(int i = 0; i < CollisionBlock.Length; i++)
             {
                 CollisionBlock[i] = new RectangleShape();
@@ -91,11 +91,8 @@ namespace Game
             Sprite.Position = Sprite.Position + new Vector2f(0, +Speed * time);
             Hitbox.Position = Sprite.Position;
             
-        }
-
-        void Render() { }
-        
-        public void Collision(char back, char right, char forward, char left) 
+        }   
+        public void Collision(char back, char right, char forward, char left, char back_left, char fw_left, char fw_right, char back_right) 
         {
             if (!WorldTextures.IsWay(back))
                 CollisionBlock[0].Position = new Vector2f(Position[0] * WorldTextures.BlockSize[0], (Position[1] + 1) * WorldTextures.BlockSize[1]);
@@ -108,6 +105,18 @@ namespace Game
 
             if (!WorldTextures.IsWay(left))
                 CollisionBlock[3].Position = new Vector2f((Position[0] - 1) * WorldTextures.BlockSize[0], Position[1] * WorldTextures.BlockSize[1]);
+
+            if (!WorldTextures.IsWay(back_left))
+                CollisionBlock[4].Position = new Vector2f((Position[0] - 1) * WorldTextures.BlockSize[0], (Position[1] + 1) * WorldTextures.BlockSize[1]);
+
+            if (!WorldTextures.IsWay(fw_left))
+                CollisionBlock[5].Position = new Vector2f((Position[0] - 1) * WorldTextures.BlockSize[0], (Position[1] - 1) * WorldTextures.BlockSize[1]);
+
+            if (!WorldTextures.IsWay(fw_right))
+                CollisionBlock[6].Position = new Vector2f((Position[0] + 1) * WorldTextures.BlockSize[0], (Position[1] - 1) * WorldTextures.BlockSize[1]);
+
+            if (!WorldTextures.IsWay(back_right))
+                CollisionBlock[7].Position = new Vector2f((Position[0] + 1) * WorldTextures.BlockSize[0], (Position[1] + 1) * WorldTextures.BlockSize[1]);
         }   
 
 
