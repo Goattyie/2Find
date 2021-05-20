@@ -13,6 +13,7 @@ namespace Game
             FileBuffer = filebuffer;
             CurrentMusic = FileBuffer[0];
             Player = new SFML.Audio.Music(CurrentMusic);
+            Player.Play();
         } 
         public void RenderMusic() 
         {

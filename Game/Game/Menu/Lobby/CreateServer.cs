@@ -113,13 +113,14 @@ namespace Game
 
         private void StartGame()
         {
+            /*
             if (!Connection.Connected)
             {
                 Status.Text.FillColor = Color.Red;
                 return;
-            }
+            }*/
             Connection.ThreadStop = true;
-            Connection.SendStart();
+            //Connection.SendStart();
             new Game(Window, new EasyGameSettings(),Connection);
         }
 

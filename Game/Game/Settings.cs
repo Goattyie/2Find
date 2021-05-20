@@ -16,7 +16,8 @@ namespace Game
         public bool Fulscreen { get; set; }
         public bool Sound { get; set; }
         public bool Scene { get; set; }
-        
+        public Music Music { get; set; }
+
         public Settings() 
         {
             if (!File.Exists(FilePath))
@@ -52,7 +53,6 @@ namespace Game
                 ToDefaultSettings(); 
             }
         }
-        
         void ToDefaultSettings()
         {
             WindowWidth = 1366;
@@ -73,6 +73,13 @@ namespace Game
             sw.WriteLine($"Sound = {Sound}");
             sw.WriteLine($"Scene = {Scene}");
             sw.Close();
+        }
+        public void RenderMusic()
+        {
+            if (Sound == true)
+                Music.RenderMusic();
+            else
+                Music.Stop();
         }
     }
 }

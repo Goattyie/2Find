@@ -29,7 +29,9 @@ namespace Game
             Map = new World(gameSettings);
             SpawnEntityes();
             SetCameras();
-            View();
+            IWindow.Settings.Music.Stop();
+            IWindow.Settings.Music = new Music(new string[] { "Music/4.ogg", "Music/5.ogg", "Music/6.ogg", "Music/7.ogg" });
+            View();         
         }
         private void SpawnEntityes()
         {
@@ -58,9 +60,11 @@ namespace Game
         }
         public void View()
         {
+            
             Connection.StartReceiving();
             while (Window.IsOpen)
             {
+                IWindow.Settings.RenderMusic();
                 Window.DispatchEvents();
                 time = (float)Clock.ElapsedTime.AsMicroseconds()/10000f;
                 Clock.Restart();

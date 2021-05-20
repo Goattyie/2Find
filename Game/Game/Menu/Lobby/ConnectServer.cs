@@ -153,9 +153,6 @@ namespace Game
             if (e.Code == Keyboard.Key.LControl)
                 PaseChecker = false;
         }
-
-
-
         private void WindowClose(object sender, EventArgs e)
         {
             Window.Close();

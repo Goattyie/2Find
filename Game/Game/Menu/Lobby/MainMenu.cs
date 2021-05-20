@@ -33,6 +33,7 @@ namespace Game
             Background.Scale = new Vector2f((float)IWindow.Settings.WindowWidth / (float)1366, (float)IWindow.Settings.WindowHeight / (float)768);
             Window.SetVerticalSyncEnabled(IWindow.Settings.VSync);
             Window.Closed += WindowClose;
+            IWindow.Settings.Music = new Music(new string[] { "Music/1.ogg", "Music/2.ogg", "Music/3.ogg" });
             //Window.KeyPressed += KeyPressed;
             View();
         }
@@ -51,13 +52,13 @@ namespace Game
             if(Connect!=null)
                 Connect.RefreshView(NewScale);
         }
-
         public void View()
         {
             while (Window.IsOpen)
             {
                 Window.DispatchEvents();
                 Window.Clear();
+                IWindow.Settings.RenderMusic();
                 DrawBackground();
                 DrawButtons();
                 ButtonActions();
