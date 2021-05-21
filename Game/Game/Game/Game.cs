@@ -27,10 +27,6 @@ namespace Game
             Window.Closed += WindowClose;
             Clock = new Clock();
             Map = new World(gameSettings);
-            SpawnEntityes();
-            SetCameras();
-            IWindow.Settings.Music.Stop();
-            IWindow.Settings.Music = new Music(new string[] { "Music/4.ogg", "Music/5.ogg", "Music/6.ogg", "Music/7.ogg" });
             View();         
         }
         private void SpawnEntityes()
@@ -60,33 +56,64 @@ namespace Game
         }
         public void View()
         {
-            
-            Connection.StartReceiving();
-            while (Window.IsOpen)
+            while (true)
             {
-                IWindow.Settings.RenderMusic();
-                Window.DispatchEvents();
-                time = (float)Clock.ElapsedTime.AsMicroseconds()/10000f;
-                Clock.Restart();
-                KeyController();
-                Camera1.Center = Heroes[0].Center;
-                Connection.Send(Heroes[0].Sprite.Position.X, Heroes[0].Sprite.Position.Y);
-                Window.Clear();
-                Window.SetView(Camera1);
-                RenderMap(0);
-                Heroes[0].Collision(Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] + 1], 
-                    Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] - 1],
-                    Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] - 1], Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] - 1], 
-                    Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] + 1], Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] + 1]);
-                RenderHeroes(false);
-                RenderEnemies(0);
-                Heroes[1].Sprite.Position = Connection.ReceivedPos;
-                Camera2.Center = Heroes[1].Center;
-                Window.SetView(Camera2);
-                RenderMap(1);
-                RenderHeroes(true);
-                RenderEnemies(1);
-                Window.Display();
+                if(!Connection.Start) //Если сервер
+                    Enemy.RandomGenerator = new Random(DateTime.Now.Day + DateTime.Now.Millisecond + DateTime.Now.Second);//сид то что в скобках (Надо создать объект RandomGenerator у клиента с таким же сидом)
+                GameStatus = 0;
+                SpawnEntityes();
+                SetCameras();
+                IWindow.Settings.Music.Stop();
+                IWindow.Settings.Music = new Music(new string[] { "Music/4.ogg", "Music/5.ogg", "Music/6.ogg", "Music/7.ogg" });
+                Connection.StartReceiving();
+                while (Window.IsOpen)
+                {
+                    IWindow.Settings.RenderMusic();
+                    Window.DispatchEvents();
+                    time = (float)Clock.ElapsedTime.AsMicroseconds() / 10000f;
+                    Clock.Restart();
+                    KeyController();
+                    Camera1.Center = Heroes[0].Center;
+                    Connection.Send(Heroes[0].Sprite.Position.X, Heroes[0].Sprite.Position.Y);
+                    Window.Clear();
+                    Window.SetView(Camera1);
+                    RenderMap(0);
+                    Heroes[0].Collision(Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] + 1],
+                        Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] - 1],
+                        Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] - 1], Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] - 1],
+                        Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] + 1], Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] + 1]);
+                    RenderHeroes(false);
+                    RenderEnemies(0);
+                    Heroes[1].Sprite.Position = Connection.ReceivedPos;
+                    Camera2.Center = Heroes[1].Center;
+                    Window.SetView(Camera2);
+                    RenderMap(1);
+                    RenderHeroes(true);
+                    RenderEnemies(1);
+                    RenderGameState();
+                    Window.Display();
+                    /*
+                    if (GameStatus != 0)
+                        break;//Конец игры*/
+                }
+                Window.SetView(Window.DefaultView);
+                int ChangeResult = 0;
+                if (!Connection.Start)
+                {
+                    EndGameServer endgame = new EndGameServer(Window, GameStatus);
+                    endgame.View();
+                    if (endgame.Result == 2)
+                        ChangeResult = 2;
+                    else ChangeResult = 1;
+                }
+                else
+                {
+                    EndGameClient endgame = new EndGameClient(Window, GameStatus);
+                    while (ChangeResult == 0)
+                        endgame.View();
+                }
+                if (ChangeResult == 2)
+                    return;
             }
         }
         private void RenderHeroes(bool hero)
@@ -118,7 +145,7 @@ namespace Game
             {
                 if (Enemies[i].SeeOtherEntity(Heroes[hero], Map.GameField))
                     Enemies[i].HeroTarget = Heroes[hero];
-                Enemies[i].AI();
+                //Enemies[i].AI();
             }
         }
         public void WindowClose(object sender, EventArgs e)
@@ -131,6 +158,23 @@ namespace Game
             if (Keyboard.IsKeyPressed(Keyboard.Key.W)) { Heroes[0].Forward(time); }
             if (Keyboard.IsKeyPressed(Keyboard.Key.D)) { Heroes[0].Right(time); }
             if (Keyboard.IsKeyPressed(Keyboard.Key.S)) { Heroes[0].Back(time); }
+        }
+        private void RenderGameState()
+        {
+            if (Heroes[0].Touch(Heroes[1]))
+            {
+                GameStatus = 1;//Победа
+                return;
+            }
+
+            foreach(Enemy enemy in Enemies)
+            {
+                foreach(Hero hero in Heroes)
+                {
+                    if (enemy.Touch(hero))
+                        GameStatus = 2;//Поражение
+                }
+            }
         }
     }
 }

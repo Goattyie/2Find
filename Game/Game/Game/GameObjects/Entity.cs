@@ -29,7 +29,7 @@ namespace Game
         public Sprite Sprite = new Sprite();
         public Vector2f Center { get { return new Vector2f((Sprite.Position.X + Width / 2), (Sprite.Position.Y + Height / 2)); } }
         public int[] Position { get { return new int[2] { (int)(Sprite.Position.X + Width / 2) / WorldTextures.BlockSize[0], (int)(Sprite.Position.Y + Height / 2) / WorldTextures.BlockSize[1]}; } }
-        public void RandomSpawn(string[] GameField)
+        public virtual void RandomSpawn(string[] GameField)
         {
             int x = 0;
             int y = 0;
@@ -63,6 +63,16 @@ namespace Game
                     return false;
                 else if (Math.Abs((int)x - (int)entity2.Center.X) < 2 && Math.Abs((int)y - (int)entity2.Center.Y) < 2)
                     return true;
+            }
+            return false;
+        }
+        public bool Touch(Entity entity)
+        {
+            double CenterDistance = Math.Sqrt(Math.Pow(this.Center.X - entity.Center.X, 2) + Math.Pow(this.Center.Y - entity.Center.Y, 2));
+            if (CenterDistance > (this.Width/2 - entity.Width/2) && CenterDistance < (this.Width/2 + entity.Width/2))
+            {
+                Console.WriteLine("Пересечение");
+                return true;
             }
             return false;
         }

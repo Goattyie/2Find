@@ -34,5 +34,19 @@ namespace Game
             return SeeTarget;
 
         }
+        public static Random RandomGenerator { get; set; }
+        public override void RandomSpawn(string[] GameField)
+        {
+            int x = 0;
+            int y = 0;
+            while (true)
+            {
+                y = RandomGenerator.Next(1, GameField.Length - 2);
+                x = RandomGenerator.Next(1, GameField[0].Length - 2);
+                if (WorldTextures.IsWay(GameField[y][x]))
+                    break;
+            }
+            Spawn(x, y);
+        }
     }
 }

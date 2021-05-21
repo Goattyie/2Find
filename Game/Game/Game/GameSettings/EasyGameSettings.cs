@@ -8,8 +8,8 @@ namespace Game
 {
     class EasyGameSettings : IGameSettings
     {
-        public int CountDefaultEnemy { get; set; } = 6;
-        public int CountGhost { get; set; } = 7;
+        public int CountDefaultEnemy { get; set; } = 12;
+        public int CountGhost { get; set; } = 12;
         public int VisibleRange { get; set; } = 5;
     }
 }
