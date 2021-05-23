@@ -15,7 +15,7 @@ namespace Game
         private List<Step> Steps = new List<Step>();
         private readonly Clock StopClock = new Clock();
         private Time StopTime { get; set; } //Время перерыва
-        protected override float Speed { get; set; } = 12;
+        protected override float Speed { get; set; } = 3;
         protected override float MaxTriggerTime { get; set; } = 4f;
 
         DefaultEnemy() { }

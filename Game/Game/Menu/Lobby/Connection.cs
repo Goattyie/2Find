@@ -11,55 +11,54 @@ namespace Game
     {
         public IPAddress Ip { get; set; }
         public Vector2f ReceivedPos { get; set; } = new Vector2f();
-        public bool ThreadStop { get; set; }
-        public bool Connected { get; set; }
-        public bool Start { get; set; }
-        int Port { get; set; } = 4444;
-        int size { get; set; }
+        public Vector2f CurrentPos { get; set; } = new Vector2f();
+        public bool Cycle { get; set; }
+        public int GameStatus { get; set; }
+        static public bool ThreadStop { get; set; }
+        static public bool Connected { get; set; }
+        static public bool StartAsClient { get; set; }
         Socket Socket { get; set; }
-        IPEndPoint ServerEndPoint { get; set; }
-        EndPoint SenderEndPoint;
+        int Port { get; set; } = 4444;
+        EndPoint SavedEndPoint;
+        EndPoint TempEP; 
         byte[] buffer { get; set; }
-        byte[] msg { get; set; } = Encoding.UTF8.GetBytes("ok");
         float[] floatPos { get; set; } = new float[2];
-        StringBuilder data { get; set; }
+        Task LobbyListen { get; set; }
+        Task GameThread { get; set; }
 
         public Connection()
         {
-            ConnectionSettings();
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             ReceiveIp();
-            ServerEndPoint = new IPEndPoint(IPAddress.Any, Port);
-            Socket.Bind(ServerEndPoint);
+            Socket.Bind(new IPEndPoint(IPAddress.Any, Port));
         }
 
         public Connection(string Ip)
         {
-            ConnectionSettings();
-            this.Ip = IPAddress.Parse(Ip);
-            ServerEndPoint = new IPEndPoint(this.Ip, Port);
-        }
-
-        public void ConnectionSettings()
-        {
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            Socket.ReceiveTimeout = 2000;
-            data = new StringBuilder();
+            this.Ip = IPAddress.Parse(Ip);
+            SavedEndPoint = new IPEndPoint(this.Ip, Port);
         }
 
         public void Listen()
         {
             try
             {
-                buffer = new byte[2];
-                data.Clear();
-                Socket.ReceiveFrom(buffer, ref SenderEndPoint);
-                data.Append(Encoding.UTF8.GetString(buffer));
-                if (data.ToString() == "go")
-                {
-                    Start = true;
-                }
-                Socket.SendTo(msg, SenderEndPoint);
+                buffer = new byte[256];
+                TempEP= new IPEndPoint(IPAddress.Any, 0);
+                Socket.ReceiveFrom(buffer, ref TempEP);
+                SavedEndPoint = TempEP;
                 Connected = true;
+                if (Encoding.UTF8.GetString(buffer).TrimEnd('\0') == "go")
+                {
+                    StartAsClient = true;
+                    Socket.ReceiveTimeout = 5000;
+                    return;
+                }
+                if (!ThreadStop)
+                {
+                    Socket.SendTo(Encoding.UTF8.GetBytes("ok"), TempEP);
+                }
             }
             catch (Exception ex)
             {
@@ -70,75 +69,155 @@ namespace Game
 
         public void SendConnection()
         {
-            Socket.SendTo(msg, ServerEndPoint);
-            SenderEndPoint = ServerEndPoint;
+            Socket.ReceiveTimeout = 2000;
+            try
+            {
+                Socket.SendTo(Encoding.UTF8.GetBytes("ok"), SavedEndPoint);
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine("SendConnection: " + ex.Message);
+            }
+        }
+
+        public void GameEnd()
+        {
+            ThreadStop = true;
+            GameThread.Wait();
+            ThreadStop = false;
         }
 
         async public void StartLobbyThread()
         {
-            SenderEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            await Task.Run(() =>
+            ThreadStop = false;
+            Socket.ReceiveTimeout = 2000;
+            StartAsClient = false;
+            LobbyListen = Task.Run(() =>
             {
                 while (!ThreadStop)
                 {
                     Listen();
                 }
-                ThreadStop = false;
             });
+            await LobbyListen;
+        }
+   
+
+        public async void StartGameThread()
+        {
+            GameThread = Task.Run(() =>
+            {
+                while (Connected && !ThreadStop)
+                {
+                    if (Cycle)
+                    {
+                        Send();
+                        ReceiveCoordinates();
+                        Cycle = false;
+                    }
+                }
+            });
+            await GameThread;
+        }
+
+        public int GetSeed()
+        {
+            int seed;
+            if (!StartAsClient)
+            {
+                seed = DateTime.Now.Day + DateTime.Now.Millisecond + DateTime.Now.Second;
+                Send(seed);
+            }
+            else
+                seed = ReceiveInt();
+            return seed;
         }
 
         public void SendStart()
         {
-            byte[] start = Encoding.UTF8.GetBytes("go");
-            Socket.SendTo(start, SenderEndPoint);
-        }
-
-        public async void StartReceiving()
-        {
+            ThreadStop = true;
+            LobbyListen.Wait();
+            ThreadStop = false;
             Socket.ReceiveTimeout = 5000;
-            await Task.Run(() =>
-            {
-                while (Connected)
-                {
-                    if (size != 0)
-                    {
-                        Receive();
-                        size = 0;
-                    }
-                }
-            });
+            byte[] start = Encoding.UTF8.GetBytes("go");
+            Socket.SendTo(start, SavedEndPoint);
         }
 
-        public void Send(float x, float y)
+        public void Send(int value)
         {
             try
             {
-                floatPos[0] = x;
-                floatPos[1] = y;
-                byte[] bytecoord = new byte[8];
-                Buffer.BlockCopy(floatPos, 0, bytecoord, 0, bytecoord.Length);
-                size = Socket.SendTo(bytecoord, SenderEndPoint);
+                byte[] bytes = new byte[255];
+                bytes = BitConverter.GetBytes(value);
+                Socket.SendTo(bytes, SavedEndPoint);
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Send(int): " + ex.Message);
             }
         }
 
-        public void Receive()
+        public void Send()
+        {
+            try
+            {
+                floatPos[0] = CurrentPos.X;
+                floatPos[1] = CurrentPos.Y;
+                byte[] bytecoord = new byte[8];
+                Buffer.BlockCopy(floatPos, 0, bytecoord, 0, bytecoord.Length);
+                Socket.SendTo(bytecoord, SavedEndPoint);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Send: " + ex.Message);
+            }
+        }
+
+        public int ReceiveInt()
+        {
+            try
+            {
+                int value;
+                buffer = new byte[255];
+                TempEP = new IPEndPoint(IPAddress.Any, 0);
+                Socket.ReceiveFrom(buffer, ref TempEP);
+                value = BitConverter.ToInt32(buffer, 0);
+                return value;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Receive is failed");
+                Connected = false;
+                return 0;
+            }
+        }
+        
+        public void ReceiveCoordinates()
         {
             try
             {
                 float[] newcoord = new float[2];
                 buffer = new byte[8];
-                SenderEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                int size = Socket.ReceiveFrom(buffer, ref SenderEndPoint);
+                TempEP = SavedEndPoint;
+                Socket.ReceiveFrom(buffer, ref TempEP);
+                int value = BitConverter.ToInt32(buffer, 0);
+                if (value == 1 || value == 2)
+                { 
+                    GameStatus = value;
+                    ThreadStop = true;
+                    return;
+                }
                 Buffer.BlockCopy(buffer, 0, newcoord, 0, buffer.Length);
                 ReceivedPos = new Vector2f(newcoord[0], newcoord[1]);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Another player left the game");
-                Connected = false;
+                Console.WriteLine("ReceiveCoordinates: " + ex.Message);
+                if (!ThreadStop)
+                {
+                    Connected = false;
+                    Console.WriteLine("Another player left the game");
+                }
             }
         }
 
@@ -161,26 +240,5 @@ namespace Game
             }
 
         }
-
-        /*public void SendReceive()
-        {
-            try
-            {
-                floatPos[0] = CurrentPos.X;
-                floatPos[1] = CurrentPos.Y;
-                byte[] bytecoord = new byte[8];
-                Buffer.BlockCopy(floatPos, 0, bytecoord, 0, bytecoord.Length);
-                Socket.SendTo(bytecoord, SenderEndPoint);
-
-                float[] newcoord = new float[2];
-                buffer = new byte[8];
-                Socket.ReceiveFrom(buffer, 8, SocketFlags.None, ref SenderEndPoint);
-                Buffer.BlockCopy(buffer, 0, newcoord, 0, buffer.Length);
-                ReceivedPos = new Vector2f(newcoord[0], newcoord[1]);
-            }
-            catch (Exception ex)
-            {
-            }
-        }*/
     }
 }

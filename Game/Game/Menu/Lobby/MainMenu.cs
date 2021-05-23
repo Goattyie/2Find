@@ -15,8 +15,8 @@ namespace Game
         Button SettingsButton { get; set; }
         Button About { get; set; }
         Button Exit { get; set; }
-        CreateServer Create { get; set; }
-        ConnectServer Connect { get; set; }
+        ServerLobby Create { get; set; }
+        ClientLobby Connect { get; set; }
         SettingsMenu SettingsMenu { get; set; }
         public RenderWindow Window { get; set; }
         Sprite Background { get; set; } = new Sprite();//пока что картинкой
@@ -34,7 +34,6 @@ namespace Game
             Window.SetVerticalSyncEnabled(IWindow.Settings.VSync);
             Window.Closed += WindowClose;
             IWindow.Settings.Music = new Music(new string[] { "Music/1.ogg", "Music/2.ogg", "Music/3.ogg" });
-            //Window.KeyPressed += KeyPressed;
             View();
         }
         private void SetInterface()
@@ -86,13 +85,13 @@ namespace Game
                 if (CreateServerButton.isPicked)
                 {
                     if (Create == null)
-                        Create = new CreateServer(Window);
+                        Create = new ServerLobby(Window);
                     Create.View();
                 }
                 else if (ConnectServerButton.isPicked)
                 {
                     if (Connect == null)
-                        Connect = new ConnectServer(Window);
+                        Connect = new ClientLobby(Window);
                     Connect.View();
                 }
                 else if(SettingsButton.isPicked)

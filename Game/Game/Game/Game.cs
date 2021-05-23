@@ -10,7 +10,7 @@ namespace Game
         public int GameStatus { get; set; } = 0;
         private IGameSettings GameSettings { get; set; }
         public RenderWindow Window { get; set; }
-        private Connection Connection { get; set; }
+        public Connection Connection { get; set; }
         Hero[] Heroes { get; set; }
         Enemy[] Enemies { get; set; }
         World Map { get; set; }
@@ -27,7 +27,8 @@ namespace Game
             Window.Closed += WindowClose;
             Clock = new Clock();
             Map = new World(gameSettings);
-            View();         
+            IWindow.Settings.Music.Stop();
+            IWindow.Settings.Music = new Music(new string[] { "Music/4.ogg", "Music/5.ogg", "Music/7.ogg", "Music/8.ogg", "Music/9.ogg" });
         }
         private void SpawnEntityes()
         {
@@ -56,66 +57,46 @@ namespace Game
         }
         public void View()
         {
-            while (true)
+            Connection.GameStatus = GameStatus = 0;
+            SetCameras();
+            Enemy.RandomGenerator = new Random(Connection.GetSeed());
+            SpawnEntityes();
+            Connection.StartGameThread();
+            while (Window.IsOpen && Connection.Connected)
             {
-                if(!Connection.Start) //Если сервер
-                    Enemy.RandomGenerator = new Random(DateTime.Now.Day + DateTime.Now.Millisecond + DateTime.Now.Second);//сид то что в скобках (Надо создать объект RandomGenerator у клиента с таким же сидом)
-                GameStatus = 0;
-                SpawnEntityes();
-                SetCameras();
-                IWindow.Settings.Music.Stop();
-                IWindow.Settings.Music = new Music(new string[] { "Music/4.ogg", "Music/5.ogg", "Music/6.ogg", "Music/7.ogg" });
-                Connection.StartReceiving();
-                while (Window.IsOpen)
-                {
-                    IWindow.Settings.RenderMusic();
-                    Window.DispatchEvents();
-                    time = (float)Clock.ElapsedTime.AsMicroseconds() / 10000f;
-                    Clock.Restart();
-                    KeyController();
-                    Camera1.Center = Heroes[0].Center;
-                    Connection.Send(Heroes[0].Sprite.Position.X, Heroes[0].Sprite.Position.Y);
-                    Window.Clear();
-                    Window.SetView(Camera1);
-                    RenderMap(0);
-                    Heroes[0].Collision(Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] + 1],
-                        Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] - 1],
-                        Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] - 1], Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] - 1],
-                        Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] + 1], Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] + 1]);
-                    RenderHeroes(false);
-                    RenderEnemies(0);
-                    Heroes[1].Sprite.Position = Connection.ReceivedPos;
-                    Camera2.Center = Heroes[1].Center;
-                    Window.SetView(Camera2);
-                    RenderMap(1);
-                    RenderHeroes(true);
-                    RenderEnemies(1);
-                    RenderGameState();
-                    Window.Display();
-                    /*
-                    if (GameStatus != 0)
-                        break;//Конец игры*/
-                }
-                Window.SetView(Window.DefaultView);
-                int ChangeResult = 0;
-                if (!Connection.Start)
-                {
-                    EndGameServer endgame = new EndGameServer(Window, GameStatus);
-                    endgame.View();
-                    if (endgame.Result == 2)
-                        ChangeResult = 2;
-                    else ChangeResult = 1;
-                }
-                else
-                {
-                    EndGameClient endgame = new EndGameClient(Window, GameStatus);
-                    while (ChangeResult == 0)
-                        endgame.View();
-                }
-                if (ChangeResult == 2)
-                    return;
+                IWindow.Settings.RenderMusic();
+                Window.DispatchEvents();
+                time = (float)Clock.ElapsedTime.AsMicroseconds() / 10000f;
+                Clock.Restart();
+                KeyController();
+                Camera1.Center = Heroes[0].Center;
+                Connection.CurrentPos = Heroes[0].Sprite.Position;
+                Connection.Cycle = true;
+                Window.Clear();
+                Window.SetView(Camera1);
+                RenderMap(0);
+                Heroes[0].Collision(Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] + 1],
+                    Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0]], Map.GameField[Heroes[0].Position[1]][Heroes[0].Position[0] - 1],
+                    Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] - 1], Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] - 1],
+                    Map.GameField[Heroes[0].Position[1] - 1][Heroes[0].Position[0] + 1], Map.GameField[Heroes[0].Position[1] + 1][Heroes[0].Position[0] + 1]);
+                RenderHeroes(false);
+                RenderEnemies(0);
+                Heroes[1].Sprite.Position = Connection.ReceivedPos;
+                Camera2.Center = Heroes[1].Center;
+                Window.SetView(Camera2);
+                RenderMap(1);
+                RenderHeroes(true);
+                RenderEnemies(1);
+                RenderGameState();
+                Window.Display();
+                if (GameStatus != 0)
+                    break;
             }
+            Connection.GameEnd();
+            Window.SetView(Window.DefaultView);
+            Window.Clear();
         }
+
         private void RenderHeroes(bool hero)
         {
             int i = Convert.ToInt32(hero);
@@ -145,7 +126,7 @@ namespace Game
             {
                 if (Enemies[i].SeeOtherEntity(Heroes[hero], Map.GameField))
                     Enemies[i].HeroTarget = Heroes[hero];
-                //Enemies[i].AI();
+                Enemies[i].AI();
             }
         }
         public void WindowClose(object sender, EventArgs e)
@@ -161,18 +142,24 @@ namespace Game
         }
         private void RenderGameState()
         {
+            if (Connection.GameStatus != 0)
+            {
+                GameStatus = Connection.GameStatus;
+                return;
+            }
             if (Heroes[0].Touch(Heroes[1]))
             {
                 GameStatus = 1;//Победа
+                Connection.Send(GameStatus);
                 return;
             }
-
-            foreach(Enemy enemy in Enemies)
+            foreach (Enemy enemy in Enemies)
             {
-                foreach(Hero hero in Heroes)
+                if (enemy.Touch(Heroes[0]))
                 {
-                    if (enemy.Touch(hero))
-                        GameStatus = 2;//Поражение
+                    GameStatus = 2;//Поражение
+                    Connection.Send(GameStatus);
+                    return;
                 }
             }
         }
