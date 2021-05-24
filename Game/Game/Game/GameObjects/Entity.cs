@@ -17,10 +17,6 @@ namespace Game
         {
             Model = new Texture($"GameTextures/{textureFile}");
             Sprite.Texture = Model;
-            Size = new int[] { Width, Height };
-            Width = (int)Model.Size.X;
-            Height = (int)Model.Size.Y;
-            Size = new int[] { Width, Height };
         }
         public int VisibleRange { get; set; } = 450;
         public int[] Size { get; set; }

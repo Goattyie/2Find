@@ -444,19 +444,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Goattyie\\.nuget\\packages\\": {}
+    "C:\\Users\\PC\\.nuget\\packages\\": {},
+    "D:\\Programs\\Microsoft VS Instruments SDK\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Game2.0\\2Find\\Game\\Game\\Game.csproj",
+      "projectUniqueName": "D:\\Programs\\GD\\2Find\\Game\\Game\\Game.csproj",
       "projectName": "Game",
-      "projectPath": "D:\\Game2.0\\2Find\\Game\\Game\\Game.csproj",
-      "packagesPath": "C:\\Users\\Goattyie\\.nuget\\packages\\",
-      "outputPath": "D:\\Game2.0\\2Find\\Game\\Game\\obj\\",
+      "projectPath": "D:\\Programs\\GD\\2Find\\Game\\Game\\Game.csproj",
+      "packagesPath": "C:\\Users\\PC\\.nuget\\packages\\",
+      "outputPath": "D:\\Programs\\GD\\2Find\\Game\\Game\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "D:\\Programs\\Microsoft VS Instruments SDK\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Goattyie\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -502,7 +507,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }

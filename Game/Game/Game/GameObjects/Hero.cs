@@ -26,6 +26,10 @@ namespace Game
             }
             Hitbox.Size = new Vector2f(Width, Height);
             Hitbox.Position = Sprite.Position;
+            Width = 70;
+            Height = 70;
+            Size = new int[] { Width, Height };
+            Sprite.Scale = new Vector2f(0.4375f, 0.4375f);
         }
         public void Left(float time) 
         {

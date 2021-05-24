@@ -42,11 +42,14 @@ namespace Game
             }
             for (int i = GameSettings.CountDefaultEnemy; i < GameSettings.CountDefaultEnemy + GameSettings.CountGhost; i++)
             {
-                Enemies[i] = new Ghost("DefaultEnemy.png", Map.GameField);
+                Enemies[i] = new Ghost("GhoustEnemy.png", Map.GameField);
                 Enemies[i].RandomSpawn(Map.GameField);
                 World.ClosedSpawnPoint[i] = new int[] { Enemies[i].Position[0], Enemies[i].Position[1] };
             }
-            Heroes = new Hero[] { new Hero("Hero1.png"), new Hero("Hero1.png") };
+            if (Connection.StartAsClient)
+                Heroes = new Hero[] { new Hero("Hero2.png"), new Hero("Hero1.png") };
+            else
+                Heroes = new Hero[] { new Hero("Hero1.png"), new Hero("Hero2.png") };
             Heroes[0].RandomSpawn(Map.GameField);
         }
         private void SetCameras()

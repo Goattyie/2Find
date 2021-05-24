@@ -15,7 +15,15 @@ namespace Game
         protected Clock Clock { get; set; }//Часы для обновления TriggerTime
         public Hero HeroTarget { get; set; }
         protected Enemy() { }
-        protected Enemy(string textureFile):base(textureFile) { this.Clock = new Clock(); TriggerTime = Clock.Restart(); }
+        protected Enemy(string textureFile):base(textureFile)
+        { 
+            this.Clock = new Clock(); TriggerTime = Clock.Restart();
+            this.Sprite.Scale = new Vector2f(0.1953125f, 0.1953125f);//
+            Width = 100;
+            Height = 100;
+            Size = new int[] { Width, Height };
+        }
+
         public bool VisibleTarget { get; set; } = false;
         public abstract void AI(float time);
         public override bool SeeOtherEntity(Entity entity2, string[] VisibleChank)

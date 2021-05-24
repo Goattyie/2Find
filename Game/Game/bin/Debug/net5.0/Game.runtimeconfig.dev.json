@@ -1,8 +1,9 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\Goattyie\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\Goattyie\\.nuget\\packages"
+      "C:\\Users\\PC\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\PC\\.nuget\\packages",
+      "D:\\Programs\\Microsoft VS Instruments SDK\\NuGetPackages"
     ]
   }
 }
