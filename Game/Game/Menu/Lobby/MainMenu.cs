@@ -5,6 +5,8 @@ using System.Text;
 using SFML.Graphics;
 using SFML.Window;
 using SFML.System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Game
 {
@@ -103,7 +105,16 @@ namespace Game
                 }
                 else if (About.isPicked)
                 {
-                    Console.WriteLine("About");
+                    string url = "https://github.com/Goattyie/2Find/blob/main/README.md";
+                    try
+                    {
+                        Process.Start(url);
+                    }
+                    catch
+                    {
+                        url = url.Replace("&", "^&");
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                    }
                 }
                 else if (Exit.isPicked)
                     Window.Close();

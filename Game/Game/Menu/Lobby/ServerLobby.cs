@@ -132,11 +132,11 @@ namespace Game
                     break;
                 case "Средний":
                     Connection.Send(2);
-                    Game = new Game(Window, new EasyGameSettings(), Connection); // Средние настройки
+                    Game = new Game(Window, new MeniumGameSettings(), Connection); // Средние настройки
                     break;
                 case "Сложный":
                     Connection.Send(3);
-                    Game = new Game(Window, new EasyGameSettings(), Connection); // Сложные настройки
+                    Game = new Game(Window, new HardGameSettings(), Connection); // Сложные настройки
                     break;
             }
         }

@@ -37,6 +37,17 @@ namespace Game
             {
                 y = new Random().Next(1, GameField.Length - 2);
                 x = new Random().Next(1, GameField[0].Length - 2);
+                var i = 0;
+                foreach (int[] position in World.ClosedSpawnPoint)//если ячейка занята врагом
+                {
+                    if (Math.Abs(x - position[0]) + Math.Abs(y - position[1]) < 4)
+                    {
+                        i = 1;
+                        break;
+                    }
+                }
+                if (i == 1)
+                    continue; 
                 if (WorldTextures.IsWay(GameField[y][x]))
                     break;
             }

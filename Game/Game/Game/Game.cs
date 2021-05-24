@@ -32,19 +32,22 @@ namespace Game
         }
         private void SpawnEntityes()
         {
-            Heroes = new Hero[] { new Hero("Hero1.png"), new Hero("Hero1.png") };
-            Heroes[0].RandomSpawn(Map.GameField);
             Enemies = new Enemy[GameSettings.CountGhost + GameSettings.CountDefaultEnemy];
+            World.ClosedSpawnPoint = new int[GameSettings.CountGhost + GameSettings.CountDefaultEnemy][];
             for (int i = 0; i < GameSettings.CountDefaultEnemy; i++)
             {
                 Enemies[i] = new DefaultEnemy("DefaultEnemy.png", Map.GameField);
                 Enemies[i].RandomSpawn(Map.GameField);
+                World.ClosedSpawnPoint[i] = new int[] { Enemies[i].Position[0], Enemies[i].Position[1] };
             }
             for (int i = GameSettings.CountDefaultEnemy; i < GameSettings.CountDefaultEnemy + GameSettings.CountGhost; i++)
             {
                 Enemies[i] = new Ghost("DefaultEnemy.png", Map.GameField);
                 Enemies[i].RandomSpawn(Map.GameField);
+                World.ClosedSpawnPoint[i] = new int[] { Enemies[i].Position[0], Enemies[i].Position[1] };
             }
+            Heroes = new Hero[] { new Hero("Hero1.png"), new Hero("Hero1.png") };
+            Heroes[0].RandomSpawn(Map.GameField);
         }
         private void SetCameras()
         {
@@ -96,19 +99,12 @@ namespace Game
             Window.SetView(Window.DefaultView);
             Window.Clear();
         }
-
         private void RenderHeroes(bool hero)
         {
             int i = Convert.ToInt32(hero);
-            Window.Draw(Heroes[i].Hitbox);
             Window.Draw(Heroes[i].Sprite);
             if (Heroes[i].SeeOtherEntity(Heroes[Convert.ToInt32(!hero)], Map.GameField))
                 Window.Draw(Heroes[Convert.ToInt32(!hero)].Sprite);
-            foreach (RectangleShape rs in Heroes[i].CollisionBlock)
-            {
-                if (rs != null)
-                    Window.Draw(rs);
-            }
             foreach (Enemy enemy in Enemies)
             {
                 if (Heroes[i].SeeOtherEntity(enemy, Map.GameField))
@@ -126,7 +122,9 @@ namespace Game
             {
                 if (Enemies[i].SeeOtherEntity(Heroes[hero], Map.GameField))
                     Enemies[i].HeroTarget = Heroes[hero];
-                Enemies[i].AI();
+
+                if(time < 5)
+                    Enemies[i].AI(time);
             }
         }
         public void WindowClose(object sender, EventArgs e)

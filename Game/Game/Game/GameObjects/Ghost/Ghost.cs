@@ -10,7 +10,7 @@ namespace Game
     class Ghost : Enemy
     {
         
-        protected override float Speed { get; set; } = 1.1f;
+        protected override float Speed { get; set; } = 1.4f;
         protected override float MaxTriggerTime { get; set; } = 10f;
 
         public Ghost(string texture, string[] gamefield) : base(texture)
@@ -20,8 +20,7 @@ namespace Game
             Array.Copy(gamefield, Gamefield, gamefield.Length);
            
         }
-
-        public override void AI()
+        public override void AI(float time)
         {
             if (HeroTarget == null || this.Center.X == HeroTarget.Center.X && this.Center.Y == HeroTarget.Center.Y)
                 return;
@@ -29,8 +28,8 @@ namespace Game
             float KatetX = -this.Center.X + HeroTarget.Center.X;
             float KatetY = -this.Center.Y + HeroTarget.Center.Y;
             double Gipotenuza = Math.Sqrt(Math.Pow(KatetX, 2) + Math.Pow(KatetY, 2));
-            double x = this.Center.X + Speed * KatetX / (float)Gipotenuza;
-            double y = this.Center.Y + Speed * KatetY / (float)Gipotenuza;
+            double x = this.Center.X + Speed * time * 0.3 * KatetX / (float)Gipotenuza;
+            double y = this.Center.Y + Speed * time * 0.3 * KatetY / (float)Gipotenuza;
             Sprite.Position = new Vector2f((float)x - Width/2, (float)y - Height/2);
 
         } 

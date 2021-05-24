@@ -15,7 +15,7 @@ namespace Game
         private List<Step> Steps = new List<Step>();
         private readonly Clock StopClock = new Clock();
         private Time StopTime { get; set; } //Время перерыва
-        protected override float Speed { get; set; } = 3;
+        protected override float Speed { get; set; } = 0.9f;
         protected override float MaxTriggerTime { get; set; } = 4f;
 
         DefaultEnemy() { }
@@ -27,10 +27,10 @@ namespace Game
             StopTime = StopClock.Restart();
         }
 
-        public override void AI()
+        public override void AI(float time)
         {
             StopTime = StopClock.ElapsedTime;
-            if (HeroTarget == null || StopTime.AsSeconds() < 10/Speed || (this.Position[0] == HeroTarget.Position[0] && this.Position[1] == HeroTarget.Position[1]))
+            if (HeroTarget == null || StopTime.AsSeconds() < 2/(time*Speed) || (this.Position[0] == HeroTarget.Position[0] && this.Position[1] == HeroTarget.Position[1]))
                 return;
 
             StopTime = StopClock.Restart();

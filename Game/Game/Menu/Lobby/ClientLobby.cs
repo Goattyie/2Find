@@ -105,10 +105,10 @@ namespace Game
                     Game = new Game(Window, new EasyGameSettings(), Connection);
                     break;
                 case 2:
-                    Game = new Game(Window, new EasyGameSettings(), Connection); // средние
+                    Game = new Game(Window, new MeniumGameSettings(), Connection); // средние
                     break;
                 case 3:
-                    Game = new Game(Window, new EasyGameSettings(), Connection); // сложные
+                    Game = new Game(Window, new HardGameSettings(), Connection); // сложные
                     break;
             }
             

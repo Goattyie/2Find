@@ -17,7 +17,7 @@ namespace Game
         protected Enemy() { }
         protected Enemy(string textureFile):base(textureFile) { this.Clock = new Clock(); TriggerTime = Clock.Restart(); }
         public bool VisibleTarget { get; set; } = false;
-        public abstract void AI();
+        public abstract void AI(float time);
         public override bool SeeOtherEntity(Entity entity2, string[] VisibleChank)
         {
             if (HeroTarget == null)
@@ -47,6 +47,11 @@ namespace Game
                     break;
             }
             Spawn(x, y);
+        }
+        public void SetSpeed(float time)
+        {
+            Console.WriteLine(time);
+            Speed *= time/2;
         }
     }
 }

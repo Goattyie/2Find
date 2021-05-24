@@ -12,7 +12,7 @@ namespace Game
         public RectangleShape Hitbox { get; set; } = new RectangleShape();
         public RectangleShape[] CollisionBlock { get; set; }
 
-        protected override float Speed { get; set; } = 2f;
+        protected override float Speed { get; set; } = 1.4f;
         
 
         Hero():base() { }
@@ -24,8 +24,6 @@ namespace Game
                 CollisionBlock[i] = new RectangleShape();
                 CollisionBlock[i].Size = new Vector2f(WorldTextures.BlockSize[0], WorldTextures.BlockSize[1]);
             }
-
-           
             Hitbox.Size = new Vector2f(Width, Height);
             Hitbox.Position = Sprite.Position;
         }
@@ -118,23 +116,12 @@ namespace Game
             if (!WorldTextures.IsWay(back_right))
                 CollisionBlock[7].Position = new Vector2f((Position[0] + 1) * WorldTextures.BlockSize[0], (Position[1] + 1) * WorldTextures.BlockSize[1]);
         }   
-
-
         protected bool RectangleCross(float x1, float y1, float x2, float y2) //Пересечение хитбокса и коллизионного квадрата
         {
-            /*
-            x1, y1 - левая нижняя точка первого прямоугольника
-            x2, y2 - правая верхняя точка первого прямоугольника
-            x3, y3 - левая нижняя точка второго прямоугольника
-            x4, y4 - правая верхняя точка второго прямоугольника
-            */
-
             float left = Math.Max(x1, x2);
             float top = Math.Min(y1 + Height, y2 + WorldTextures.BlockSize[1]);
             float right = Math.Min(x1 + Width, x2 + WorldTextures.BlockSize[0]);
             float bottom = Math.Max(y1, y2);
-
-
 
             float width = right - left;
             float height =  top - bottom;

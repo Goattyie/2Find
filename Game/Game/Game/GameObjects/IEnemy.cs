@@ -10,6 +10,6 @@ namespace Game
     interface IEnemy
     {
         Hero HeroTarget { get; set; }
-        void AI();
+        void AI(float time);
     }
 }

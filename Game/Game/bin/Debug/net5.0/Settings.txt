@@ -3,4 +3,4 @@ Height = 768
 VSync = True
 Scale = 1
 Sound = False
-Scene = True
+Scene = False

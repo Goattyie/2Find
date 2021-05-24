@@ -200,6 +200,8 @@ namespace Game
                 buffer = new byte[8];
                 TempEP = SavedEndPoint;
                 Socket.ReceiveFrom(buffer, ref TempEP);
+
+
                 int value = BitConverter.ToInt32(buffer, 0);
                 if (value == 1 || value == 2)
                 { 

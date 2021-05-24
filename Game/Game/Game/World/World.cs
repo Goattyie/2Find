@@ -7,6 +7,7 @@ namespace Game
     class World
     {
         public string[] GameField { get; set; }
+        public static int[][] ClosedSpawnPoint { get; set; }
         int[] Size { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
@@ -28,16 +29,17 @@ namespace Game
             }
             Height = GameField.Length;
             Width = GameField[0].ToString().Length;
-            RenderRange = igs.VisibleRange;
 
         }
         public World(string[][]map) { }
         public void Render(RenderWindow window, int[] Position)
         {
-            for(int y = 0; y < GameField.Length; y++)
+            for(int y = Position[1] - 10; y <= Position[1] + 10; y++)
             {
-                for(int x = 0; x < GameField[y].Length; x++)
+                for(int x = Position[0] - 10; x <= Position[0] + 10; x++)
                 {
+                    if (x < 0 || y < 0 || y >= GameField.Length || x >= GameField[y].Length)
+                        continue;
                     RectangleShape blck = Block.View(GameField[y].ToString()[x], x,y);
                     window.Draw(blck);
                 }
